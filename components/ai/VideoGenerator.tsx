@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { generateVideo, getVideoOperationStatus } from '../../services/geminiService';
 import { UploadIcon, SparklesIcon } from '../Icons';
 import { VideoGenerationOperation } from '../../types';
+import VoiceInput from './VoiceInput';
 
 const VideoGenerator = () => {
     const [prompt, setPrompt] = useState('');
@@ -159,15 +160,18 @@ const VideoGenerator = () => {
 
                 <div>
                     <label htmlFor="prompt" className="block text-sm font-medium text-muted-foreground mb-1">Visual Prompt</label>
-                    <textarea
-                        id="prompt"
-                        rows={3}
-                        value={prompt}
-                        onChange={(e) => setPrompt(e.target.value)}
-                        placeholder="e.g., An animated, swirling galaxy for a synthwave track"
-                        className="w-full bg-accent text-foreground placeholder-muted-foreground border border-border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-ring"
-                        required
-                    />
+                    <div className="flex items-start space-x-2">
+                        <textarea
+                            id="prompt"
+                            rows={3}
+                            value={prompt}
+                            onChange={(e) => setPrompt(e.target.value)}
+                            placeholder="e.g., An animated, swirling galaxy for a synthwave track"
+                            className="w-full bg-accent text-foreground placeholder-muted-foreground border border-border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-ring"
+                            required
+                        />
+                        <VoiceInput onFinalTranscript={setPrompt} targetId="prompt" className="p-3 mt-1" />
+                    </div>
                 </div>
                 
                  <div>

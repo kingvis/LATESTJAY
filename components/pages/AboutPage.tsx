@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
 import { FACULTY } from '../../constants';
 
 const useAnimateOnScroll = (threshold = 0.1) => {
@@ -34,7 +35,20 @@ const useAnimateOnScroll = (threshold = 0.1) => {
 export const AboutPage = () => {
   const [storyRef, storyVisible] = useAnimateOnScroll();
   const [visionMissionRef, visionMissionVisible] = useAnimateOnScroll();
-  const [facultyRef, facultyVisible] = useAnimateOnScroll();
+
+  const facultyCardVariants = {
+      hidden: { opacity: 0, y: 20, scale: 0.95 },
+      visible: (i: number) => ({
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          transition: {
+              delay: i * 0.1,
+              duration: 0.5,
+              ease: "easeOut",
+          },
+      }),
+  };
 
   return (
     <div className="py-16 md:py-24 overflow-x-hidden">
@@ -71,22 +85,27 @@ export const AboutPage = () => {
         </section>
 
         {/* Faculty */}
-        <section 
-          ref={facultyRef}
-          className={`transition-all duration-1000 ease-out ${facultyVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-        >
+        <section>
           <h2 className="text-4xl font-bold text-center text-foreground mb-12">Meet Our Instructors</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {FACULTY.map((member) => (
-              <div key={member.name} className="text-center group">
+            {FACULTY.map((member, index) => (
+              <motion.div 
+                key={member.name} 
+                className="text-center group"
+                variants={facultyCardVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.3 }}
+                custom={index}
+              >
                 <div className="relative w-full aspect-square mx-auto rounded-lg overflow-hidden mb-4 border-2 border-transparent group-hover:border-primary transition-all duration-300 group-hover:shadow-2xl group-hover:shadow-primary/20">
-                  <img src={member.imageUrl} alt={member.name} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                  <img src={member.imageUrl} alt={member.name} className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105 group-hover:brightness-110" />
                   <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-300"></div>
                 </div>
                 <h3 className="text-xl font-bold text-card-foreground">{member.name}</h3>
                 <p className="text-primary font-semibold">{member.role}</p>
                 <p className="text-muted-foreground text-sm mt-1">{member.experience}</p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </section>

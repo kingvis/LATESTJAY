@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { ChatMessage } from '../../types';
 import { getAdvancedResponse } from '../../services/geminiService';
 import { SendIcon } from '../Icons';
+import VoiceInput from './VoiceInput';
 
 const AdvancedAnalyst = () => {
     const [input, setInput] = useState('');
@@ -92,6 +93,7 @@ const AdvancedAnalyst = () => {
             <div className="">
                 <form onSubmit={handleSendMessage} className="flex items-center space-x-2">
                     <input
+                        id="advanced-analyst-input"
                         type="text"
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
@@ -107,6 +109,7 @@ const AdvancedAnalyst = () => {
                     >
                         <SendIcon className="h-5 w-5" />
                     </button>
+                    <VoiceInput onFinalTranscript={setInput} targetId="advanced-analyst-input" className="bg-secondary text-secondary-foreground" />
                 </form>
             </div>
         </div>

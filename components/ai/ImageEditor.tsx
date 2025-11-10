@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { editImage } from '../../services/geminiService';
 import { UploadIcon, SparklesIcon } from '../Icons';
+import VoiceInput from './VoiceInput';
 
 const ImageEditor = () => {
     const [prompt, setPrompt] = useState('');
@@ -85,15 +86,18 @@ const ImageEditor = () => {
                 </div>
                  <div>
                     <label htmlFor="edit-prompt" className="block text-sm font-medium text-muted-foreground mb-1">Editing Prompt</label>
-                    <input
-                        type="text"
-                        id="edit-prompt"
-                        value={prompt}
-                        onChange={(e) => setPrompt(e.target.value)}
-                        placeholder="e.g., Add a vintage film grain effect"
-                        className="w-full bg-accent text-foreground placeholder-muted-foreground border border-border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-ring"
-                        required
-                    />
+                    <div className="flex items-center space-x-2">
+                        <input
+                            type="text"
+                            id="edit-prompt"
+                            value={prompt}
+                            onChange={(e) => setPrompt(e.target.value)}
+                            placeholder="e.g., Add a vintage film grain effect"
+                            className="w-full bg-accent text-foreground placeholder-muted-foreground border border-border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-ring"
+                            required
+                        />
+                        <VoiceInput onFinalTranscript={setPrompt} targetId="edit-prompt" />
+                    </div>
                 </div>
                 <button
                     type="submit"

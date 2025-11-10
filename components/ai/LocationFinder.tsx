@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { ChatMessage } from '../../types';
 import { getMapResponse } from '../../services/geminiService';
 import { SendIcon } from '../Icons';
+import VoiceInput from './VoiceInput';
 
 type LocationState = 'PENDING' | 'GRANTED' | 'DENIED';
 
@@ -136,6 +137,7 @@ const LocationFinder = () => {
             <div className="">
                 <form onSubmit={handleSendMessage} className="flex items-center space-x-2">
                     <input
+                        id="location-finder-input"
                         type="text"
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
@@ -151,6 +153,7 @@ const LocationFinder = () => {
                     >
                         <SendIcon className="h-5 w-5" />
                     </button>
+                    <VoiceInput onFinalTranscript={setInput} targetId="location-finder-input" className="bg-secondary text-secondary-foreground" />
                 </form>
             </div>
         </div>

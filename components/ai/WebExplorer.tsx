@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChatMessage } from '../../types';
 import { getWebResponse } from '../../services/geminiService';
-import { SendIcon, GlobeIcon } from '../Icons';
+import { SendIcon } from '../Icons';
+import VoiceInput from './VoiceInput';
 
 const WebExplorer = () => {
     const [input, setInput] = useState('');
@@ -104,6 +105,7 @@ const WebExplorer = () => {
             <div className="">
                 <form onSubmit={handleSendMessage} className="flex items-center space-x-2">
                     <input
+                        id="web-explorer-input"
                         type="text"
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
@@ -119,6 +121,7 @@ const WebExplorer = () => {
                     >
                         <SendIcon className="h-5 w-5" />
                     </button>
+                    <VoiceInput onFinalTranscript={setInput} targetId="web-explorer-input" className="bg-secondary text-secondary-foreground" />
                 </form>
             </div>
         </div>

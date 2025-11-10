@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { generatePracticePlan } from '../../services/geminiService';
 import { COURSES } from '../../constants';
 import { SparklesIcon } from '../Icons';
+import VoiceInput from './VoiceInput';
 
 const PracticePlanner = () => {
     const [selectedCourse, setSelectedCourse] = useState(COURSES[0]?.title || '');
@@ -52,15 +53,18 @@ const PracticePlanner = () => {
                 </div>
                 <div>
                     <label htmlFor="goal-input" className="block text-sm font-medium text-muted-foreground mb-1">What's your goal today?</label>
-                    <input
-                        type="text"
-                        id="goal-input"
-                        value={goal}
-                        onChange={(e) => setGoal(e.target.value)}
-                        placeholder="e.g., Improve finger speed on piano"
-                        className="w-full bg-accent text-foreground placeholder-muted-foreground border border-border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-ring"
-                        required
-                    />
+                    <div className="flex items-center space-x-2">
+                        <input
+                            type="text"
+                            id="goal-input"
+                            value={goal}
+                            onChange={(e) => setGoal(e.target.value)}
+                            placeholder="e.g., Improve finger speed on piano"
+                            className="w-full bg-accent text-foreground placeholder-muted-foreground border border-border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-ring"
+                            required
+                        />
+                        <VoiceInput onFinalTranscript={setGoal} targetId="goal-input" />
+                    </div>
                 </div>
                 <button
                     type="submit"
