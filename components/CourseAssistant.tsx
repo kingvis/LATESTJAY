@@ -57,7 +57,7 @@ export const CourseAssistant = () => {
       >
         <button
           onClick={() => setIsOpen(true)}
-          className="bg-secondary-foreground text-secondary rounded-full p-4 shadow-lg hover:scale-110 transform transition-transform duration-200"
+          className="bg-primary text-primary-foreground rounded-full p-4 shadow-lg hover:scale-110 transform transition-transform duration-200 hover:bg-primary/90"
           aria-label="Open Course Assistant"
         >
           <ChatIcon className="h-8 w-8" />
@@ -73,7 +73,7 @@ export const CourseAssistant = () => {
       >
         {/* Header */}
         <div className="flex justify-between items-center p-4 border-b border-border">
-          <h3 className="text-lg font-bold text-secondary">Course Assistant</h3>
+          <h3 className="text-lg font-bold text-primary">Course Assistant</h3>
           <button onClick={() => setIsOpen(false)} className="text-muted-foreground hover:text-foreground">
             <CloseIcon className="h-6 w-6" />
           </button>
@@ -103,9 +103,9 @@ export const CourseAssistant = () => {
              <div className="flex justify-start gap-2">
                 <div className="bg-accent text-accent-foreground rounded-lg px-4 py-2 rounded-bl-none">
                     <div className="flex items-center space-x-1">
-                        <span className="w-2 h-2 bg-secondary rounded-full animate-pulse delay-0"></span>
-                        <span className="w-2 h-2 bg-secondary rounded-full animate-pulse delay-150"></span>
-                        <span className="w-2 h-2 bg-secondary rounded-full animate-pulse delay-300"></span>
+                        <span className="w-2 h-2 bg-primary rounded-full animate-pulse delay-0"></span>
+                        <span className="w-2 h-2 bg-primary rounded-full animate-pulse delay-150"></span>
+                        <span className="w-2 h-2 bg-primary rounded-full animate-pulse delay-300"></span>
                     </div>
                 </div>
             </div>
@@ -126,7 +126,7 @@ export const CourseAssistant = () => {
             />
             <button
               type="submit"
-              className="bg-secondary-foreground text-secondary rounded-full p-3 hover:bg-secondary-foreground/80 disabled:bg-muted disabled:cursor-not-allowed transition-colors"
+              className="bg-primary text-primary-foreground rounded-full p-3 hover:bg-primary/80 disabled:bg-muted disabled:cursor-not-allowed transition-colors"
               disabled={isLoading || !input.trim()}
               aria-label="Send message"
             >

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Course, Testimonial, Faculty } from './types';
 import { PianoIcon, GuitarIcon, VocalIcon, DanceIcon, ExamIcon } from './components/Icons';
@@ -15,9 +14,9 @@ export const COURSES: Course[] = [
 ];
 
 export const TESTIMONIALS: Testimonial[] = [
-  { name: 'Priya S.', course: 'Piano', quote: 'The instructors are incredibly patient and skilled. I have learned so much in just a few months!', avatar: 'https://picsum.photos/100/100?random=1' },
-  { name: 'Rohan K.', course: 'Guitar', quote: 'Jay Music Academy has a fantastic learning environment. The AI assistant helped me pick the perfect course!', avatar: 'https://picsum.photos/100/100?random=2' },
-  { name: 'Anjali M.', course: 'Carnatic Vocal', quote: 'A truly authentic experience. The dedication of the gurus here is unparalleled. Highly recommended.', avatar: 'https://picsum.photos/100/100?random=3' },
+  { name: 'Priya S.', course: 'Piano', quote: 'The instructors are incredibly patient and skilled. I have learned so much in just a few months!', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=3540&auto=format&fit=crop' },
+  { name: 'Rohan K.', course: 'Guitar', quote: 'Jay Music Academy has a fantastic learning environment. The AI assistant helped me pick the perfect course!', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=3560&auto=format&fit=crop' },
+  { name: 'Anjali M.', course: 'Carnatic Vocal', quote: 'A truly authentic experience. The dedication of the gurus here is unparalleled. Highly recommended.', avatar: 'https://images.unsplash.com/photo-1623582854588-d60de57fa33f?q=80&w=3540&auto=format&fit=crop' },
 ];
 
 export const FACULTY: Faculty[] = [

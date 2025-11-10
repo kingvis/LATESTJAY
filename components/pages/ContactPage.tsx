@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { MailIcon, PhoneIcon } from '../Icons';
+import { ElegantShape } from '../ui/shape-landing-hero';
 
 export const ContactPage = () => {
     const [formData, setFormData] = useState({ name: '', email: '', message: '' });
@@ -17,10 +18,36 @@ export const ContactPage = () => {
     };
 
     return (
-        <div className="py-16 md:py-24">
+        <div className="relative py-16 md:py-24 overflow-hidden min-h-screen">
+             <div className="absolute inset-0 -z-10">
+                <ElegantShape
+                    delay={0.3}
+                    width={600}
+                    height={140}
+                    rotate={12}
+                    gradient="from-indigo-500/[0.15]"
+                    className="left-[-10%] md:left-[-5%] top-[15%] md:top-[20%]"
+                />
+                <ElegantShape
+                    delay={0.5}
+                    width={500}
+                    height={120}
+                    rotate={-15}
+                    gradient="from-rose-500/[0.15]"
+                    className="right-[-5%] md:right-[0%] top-[70%] md:top-[75%]"
+                />
+                 <ElegantShape
+                    delay={0.4}
+                    width={300}
+                    height={80}
+                    rotate={-8}
+                    gradient="from-violet-500/[0.15]"
+                    className="left-[5%] md:left-[10%] bottom-[5%] md:bottom-[10%]"
+                />
+            </div>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-16">
-                    <h1 className="text-4xl md:text-5xl font-extrabold text-foreground tracking-tight mb-4">Get In <span className="text-secondary">Touch</span></h1>
+                    <h1 className="text-4xl md:text-5xl font-extrabold text-foreground tracking-tight mb-4">Get In <span className="text-primary">Touch</span></h1>
                     <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
                         Have questions or ready to enroll? We'd love to hear from you. Reach out to us through any of the methods below.
                     </p>
@@ -28,7 +55,7 @@ export const ContactPage = () => {
 
                 <div className="grid lg:grid-cols-2 gap-12 items-start">
                     {/* Contact Form */}
-                    <div className="bg-card/50 backdrop-blur-sm p-8 rounded-lg border border-border">
+                    <div className="bg-card/50 backdrop-blur-xl p-8 rounded-lg border border-border">
                         <h2 className="text-2xl font-bold text-card-foreground mb-6">Send us a Message</h2>
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div>
@@ -44,7 +71,7 @@ export const ContactPage = () => {
                                 <textarea name="message" id="message" rows={4} value={formData.message} onChange={handleChange} required className="mt-1 block w-full bg-accent border border-border rounded-md shadow-sm py-2 px-3 text-foreground focus:outline-none focus:ring-ring focus:border-ring"></textarea>
                             </div>
                             <div>
-                                <button type="submit" className="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-secondary bg-secondary-foreground hover:bg-secondary-foreground/80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring transition-all">
+                                <button type="submit" className="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring transition-all">
                                     Send Message
                                 </button>
                             </div>
@@ -54,24 +81,24 @@ export const ContactPage = () => {
 
                     {/* Contact Info */}
                     <div className="space-y-8">
-                        <div className="bg-card/50 backdrop-blur-sm p-8 rounded-lg border border-border">
+                        <div className="bg-card/50 backdrop-blur-xl p-8 rounded-lg border border-border">
                              <h3 className="text-xl font-bold text-card-foreground mb-4">Contact Information</h3>
                             <div className="space-y-4 text-muted-foreground">
                                 <p className="flex items-center">
-                                    <PhoneIcon className="w-5 h-5 mr-3 text-secondary"/>
+                                    <PhoneIcon className="w-5 h-5 mr-3 text-primary"/>
                                     +91 12345 67890
                                 </p>
                                 <p className="flex items-center">
-                                    <MailIcon className="w-5 h-5 mr-3 text-secondary"/>
+                                    <MailIcon className="w-5 h-5 mr-3 text-primary"/>
                                     info@jaymusicacademy.com
                                 </p>
                             </div>
                         </div>
-                        <div className="bg-card/50 backdrop-blur-sm p-8 rounded-lg border border-border">
+                        <div className="bg-card/50 backdrop-blur-xl p-8 rounded-lg border border-border">
                              <h3 className="text-xl font-bold text-card-foreground mb-4">Operating Hours</h3>
                              <div className="space-y-2 text-muted-foreground">
-                                <p><span className="font-semibold text-secondary">Thiruninravur:</span> Mon - Sat, 10am - 8pm</p>
-                                <p><span className="font-semibold text-secondary">Kattupakkam:</span> Mon - Sun, Timings vary</p>
+                                <p><span className="font-semibold text-primary">Thiruninravur:</span> Mon - Sat, 10am - 8pm</p>
+                                <p><span className="font-semibold text-primary">Kattupakkam:</span> Mon - Sun, Timings vary</p>
                                 <p>All branches closed on public holidays.</p>
                              </div>
                         </div>

@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { COURSES, TESTIMONIALS } from '../../constants';
 import { CourseCard } from '../CourseCard';
 import { BackgroundPaths } from '../ui/background-paths';
+import { AnimatedTestimonials } from '../ui/animated-testimonials';
 
 const useAnimateOnScroll = (threshold = 0.1) => {
     const [isVisible, setIsVisible] = useState(false);
@@ -39,6 +40,13 @@ export const HomePage = () => {
   const [coursesRef, coursesVisible] = useAnimateOnScroll();
   const [testimonialsRef, testimonialsVisible] = useAnimateOnScroll();
   const [ctaRef, ctaVisible] = useAnimateOnScroll();
+  
+  const formattedTestimonials = TESTIMONIALS.map(t => ({
+      quote: t.quote,
+      name: t.name,
+      designation: `${t.course} Student`,
+      src: t.avatar,
+  }));
 
   return (
     <div className="space-y-24 md:space-y-32 pb-24 overflow-x-hidden">
@@ -74,25 +82,12 @@ export const HomePage = () => {
       {/* Testimonials */}
       <section 
         ref={testimonialsRef}
-        className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-1000 ease-out ${testimonialsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+        className={`transition-all duration-1000 ease-out ${testimonialsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
       >
-        <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-12">
+        <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-4">
           What Our Students Say
         </h2>
-        <div className="grid md:grid-cols-1 lg:grid-cols-3 gap-8">
-          {TESTIMONIALS.map((testimonial) => (
-            <div key={testimonial.name} className="bg-card/50 p-6 rounded-lg border border-border">
-              <p className="text-muted-foreground italic mb-4">"{testimonial.quote}"</p>
-              <div className="flex items-center">
-                <img className="h-12 w-12 rounded-full object-cover" src={testimonial.avatar} alt={testimonial.name} />
-                <div className="ml-4">
-                  <p className="font-bold text-card-foreground">{testimonial.name}</p>
-                  <p className="text-sm text-secondary">{testimonial.course} Student</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+        <AnimatedTestimonials testimonials={formattedTestimonials} autoplay />
       </section>
       
        {/* CTA Section */}
@@ -100,14 +95,14 @@ export const HomePage = () => {
         ref={ctaRef}
         className={`max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center transition-all duration-1000 ease-out ${ctaVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
       >
-        <div className="bg-gradient-to-r from-primary/30 to-secondary-foreground/30 p-8 md:p-12 rounded-lg border border-border">
+        <div className="bg-gradient-to-r from-primary/30 to-secondary/30 p-8 md:p-12 rounded-lg border border-border">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Ready to Start Learning?</h2>
             <p className="text-muted-foreground text-lg mb-8">
                 Book a free demo class or enroll today to join our vibrant community of artists.
             </p>
             <NavLink
                 to="/contact"
-                className="inline-block bg-secondary-foreground text-secondary font-bold py-3 px-8 rounded-full shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-secondary/20"
+                className="inline-block bg-primary text-primary-foreground font-bold py-3 px-8 rounded-full shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-primary/20"
             >
                 Enroll Now
             </NavLink>

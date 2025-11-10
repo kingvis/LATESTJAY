@@ -43,6 +43,14 @@ const LiveAssistant = () => {
             audioContextRef.current.close();
             audioContextRef.current = null;
         }
+        
+        // Stop any currently playing/queued audio from the AI
+        for (const source of audioSourcesRef.current.values()) {
+            source.stop();
+        }
+        audioSourcesRef.current.clear();
+        nextStartTimeRef.current = 0;
+
         if (outputAudioContextRef.current && outputAudioContextRef.current.state !== 'closed') {
              outputAudioContextRef.current.close();
              outputAudioContextRef.current = null;
@@ -65,6 +73,7 @@ const LiveAssistant = () => {
             // Cast window to any to support webkitAudioContext for older browsers without TS errors.
             outputAudioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
             nextStartTimeRef.current = 0;
+            audioSourcesRef.current.clear(); // Clear any stale sources
             
             sessionPromiseRef.current = ai.live.connect({
                 model: 'gemini-2.5-flash-native-audio-preview-09-2025',
@@ -122,6 +131,15 @@ const LiveAssistant = () => {
                             source.start(nextStartTimeRef.current);
                             nextStartTimeRef.current += audioBuffer.duration;
                             audioSourcesRef.current.add(source);
+                        }
+
+                        // Handle interruption from the user.
+                        if (message.serverContent?.interrupted) {
+                            for (const source of audioSourcesRef.current.values()) {
+                                source.stop();
+                            }
+                            audioSourcesRef.current.clear();
+                            nextStartTimeRef.current = 0;
                         }
                     },
                     onerror: (e: ErrorEvent) => {

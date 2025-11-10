@@ -52,7 +52,7 @@ export const CoursesPage = () => {
     <div className="py-16 md:py-24 overflow-x-hidden min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-foreground tracking-tight mb-4">Explore Our <span className="text-secondary">Courses</span></h1>
+          <h1 className="text-4xl md:text-5xl font-extrabold text-foreground tracking-tight mb-4">Explore Our <span className="text-primary">Courses</span></h1>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
             From classical traditions to modern genres, we offer a comprehensive range of courses for every aspiring artist.
           </p>

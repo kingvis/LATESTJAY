@@ -49,6 +49,31 @@
                 foreground: 'hsl(var(--card-foreground))',
               },
             },
+            animation: {
+              "shimmer-slide": "shimmer-slide var(--speed) ease-in-out infinite alternate",
+              "spin-around": "spin-around calc(var(--speed) * 2) infinite linear",
+            },
+            keyframes: {
+              "spin-around": {
+                "0%": {
+                  transform: "translateZ(0) rotate(0)",
+                },
+                "15%, 35%": {
+                  transform: "translateZ(0) rotate(90deg)",
+                },
+                "65%, 85%": {
+                  transform: "translateZ(0) rotate(270deg)",
+                },
+                "100%": {
+                  transform: "translateZ(0) rotate(360deg)",
+                },
+              },
+              "shimmer-slide": {
+                to: {
+                  transform: "translate(calc(100cqw - 100%), 0)",
+                },
+              },
+            },
           },
         },
       };
@@ -86,9 +111,9 @@
         --primary: 242 100% 66%;
         --primary-foreground: 0 0% 100%;
         --secondary: 240 100% 97%;
-        --secondary-foreground: 242 100% 66%;
+        --secondary-foreground: 242 80% 55%;
         --muted: 240 8% 96%;
-        --muted-foreground: 268 9% 44%;
+        --muted-foreground: 268 10% 30%;
         --accent: 243 100% 96%;
         --accent-foreground: 242 100% 66%;
         --destructive: 0 84.2% 60.2%;

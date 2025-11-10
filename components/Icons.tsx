@@ -127,3 +127,7 @@ export const UserIcon = (props: React.SVGProps<SVGSVGElement>) => (
 export const LogOutIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <IconWrapper {...props}><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" /></IconWrapper>
 );
+
+export const ListMusicIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <IconWrapper {...props}><path d="M11 18h9"/><path d="M11 14h9"/><path d="M11 10h9"/><path d="M11 6h9"/><path d="M5 19.5V7a2 2 0 0 1 2-2h0a2 2 0 0 1 2 2v12.5a2.5 2.5 0 0 1-5 0Z"/><path d="M3 12a2 2 0 1 1 4 0 2 2 0 0 1-4 0Z"/></IconWrapper>
+);

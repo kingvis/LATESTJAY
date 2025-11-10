@@ -48,6 +48,37 @@ export const getCourseRecommendation = async (userInput: string): Promise<string
   }
 };
 
+export const generatePracticePlan = async (course: string, goal: string): Promise<string> => {
+    const practiceSystemInstruction = `You are an expert music teacher for Jay Music Academy. Your task is to generate a concise, actionable practice plan or a short lesson plan based on a student's chosen course and goal. The plan should be structured, easy to follow, and encouraging. Use Markdown for formatting (e.g., headings, bullet points, bold text).
+
+    Example structure:
+    - **Warm-up:** (1-2 simple exercises)
+    - **Core Focus:** (2-3 exercises related to the goal)
+    - **Creative Application:** (A small task to apply the skill)
+    - **Cool-down/Review:** (A final thought or reminder)
+
+    Keep the total plan brief, suitable for a 15-30 minute practice session.`;
+
+    try {
+        const ai = createAiClient();
+        const userInput = `Course: ${course}\nStudent's Goal: ${goal}`;
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: userInput,
+            config: {
+                systemInstruction: practiceSystemInstruction,
+            },
+        });
+        return response.text;
+    } catch (error) {
+        console.error("Error calling Gemini API for practice plan:", error);
+        if (error instanceof Error && error.message.includes("API_KEY")) {
+            return "I'm sorry, my AI brain is taking a break right now as the API key is not configured. Please try again later.";
+        }
+        return "I'm sorry, I encountered an error while creating your practice plan. Please try again in a moment.";
+    }
+};
+
 export const editImage = async (prompt: string, imageBase64: string, mimeType: string): Promise<string> => {
   const ai = createAiClient();
   const imagePart = {

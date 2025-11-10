@@ -1,9 +1,10 @@
+
 "use client";
 
 import { motion } from "framer-motion";
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { Button } from "./button";
+import { ShimmerButton } from "./shimmer-button";
 
 function FloatingPaths({ position }: { position: number }) {
     const paths = Array.from({ length: 36 }, (_, i) => ({
@@ -73,7 +74,7 @@ export function BackgroundPaths({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 2 }}
-                    className="max-w-4xl mx-auto"
+                    className="max-w-4xl mx-auto flex flex-col items-center"
                 >
                     <h1 className="text-5xl sm:text-7xl md:text-8xl font-bold mb-4 tracking-tighter">
                         {words.map((word, wordIndex) => (
@@ -109,24 +110,16 @@ export function BackgroundPaths({
                     </p>
 
                     <NavLink to="/courses">
-                        <Button
-                            variant="ghost"
-                            className="rounded-full px-8 py-6 text-lg font-semibold backdrop-blur-md 
-                            bg-foreground/10 hover:bg-foreground/20
-                            text-foreground transition-all duration-300 
-                            hover:-translate-y-0.5 border border-foreground/20
-                            hover:shadow-lg hover:shadow-secondary/20"
+                        <ShimmerButton
+                            className="px-8 py-4 text-lg font-semibold"
+                            background="hsl(var(--primary))"
+                            shimmerColor="#FFFFFF"
                         >
-                            <span className="opacity-90 group-hover:opacity-100 transition-opacity">
+                            <span className="whitespace-pre-wrap text-center font-medium leading-none tracking-tight text-primary-foreground">
                                 Explore Courses
+                                <span className="ml-3 transition-transform duration-300 group-hover:translate-x-1">→</span>
                             </span>
-                            <span
-                                className="ml-3 opacity-70 group-hover:opacity-100 group-hover:translate-x-1.5 
-                                transition-all duration-300"
-                            >
-                                →
-                            </span>
-                        </Button>
+                        </ShimmerButton>
                     </NavLink>
                 </motion.div>
             </div>
