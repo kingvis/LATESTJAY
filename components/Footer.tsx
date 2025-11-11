@@ -1,11 +1,10 @@
-
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { FacebookIcon, InstagramIcon, TwitterIcon, YoutubeIcon } from './Icons';
 
 export const Footer = () => {
   return (
-    <footer className="bg-background/80 backdrop-blur-sm border-t border-border text-muted-foreground">
+    <footer id="contact" className="bg-background/80 backdrop-blur-sm border-t border-border text-muted-foreground">
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           <div className="space-y-8 xl:col-span-1">
@@ -23,7 +22,7 @@ export const Footer = () => {
                 <InstagramIcon className="h-6 w-6" />
               </a>
               <a href="#" className="text-muted-foreground hover:text-secondary transition-colors">
-                <span className="sr-only">Twitter</span>
+                <span className="sr-only">X</span>
                 <TwitterIcon className="h-6 w-6" />
               </a>
               <a href="#" className="text-muted-foreground hover:text-secondary transition-colors">
@@ -46,8 +45,8 @@ export const Footer = () => {
                 <h3 className="text-sm font-semibold text-foreground tracking-wider uppercase">Support</h3>
                 <ul className="mt-4 space-y-4">
                   <li><NavLink to="/contact" className="text-base text-muted-foreground hover:text-foreground">Contact Us</NavLink></li>
-                  <li><a href="#" className="text-base text-muted-foreground hover:text-foreground">Online Classes</a></li>
-                  <li><a href="#" className="text-base text-muted-foreground hover:text-foreground">Enroll Now</a></li>
+                  <li><a href="#" className="text-base text-muted-foreground hover:text-foreground">Online Classes (Coming Soon)</a></li>
+                  <li><NavLink to="/enroll" className="text-base text-muted-foreground hover:text-foreground">Enroll Now</NavLink></li>
                 </ul>
               </div>
             </div>
@@ -58,6 +57,11 @@ export const Footer = () => {
                   <li><p className="text-base text-muted-foreground">info@jaymusicacademy.com</p></li>
                   <li><p className="text-base text-muted-foreground">+91 12345 67890</p></li>
                   <li><p className="text-base text-muted-foreground">Thiruninravur & Kattupakkam</p></li>
+                  <li className="pt-2">
+                    <NavLink to="/contact" className="text-base text-primary hover:underline font-medium">
+                      Send us a message &rarr;
+                    </NavLink>
+                  </li>
                 </ul>
               </div>
             </div>

@@ -45,7 +45,9 @@ export const InstagramIcon = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 export const TwitterIcon = (props: React.SVGProps<SVGSVGElement>) => (
-    <IconWrapper {...props}><path d="M22 4s-.7 2.1-2 3.4c1.6 1.4 3.3 4.9 3.3 4.9-6.1-1.4-12.1-6.4-12.1-6.4s-2.1 4.4 2.4 6.8c-1.4 1-2.9 .6-2.9 .6s-1.4 4.8 4.2 5.9c-2.1 1.2-4.8.9-4.8.9s-1.4 2.9 5.1 3.2c-3.1 2.1-6.1 2.3-6.1 2.3s2.1 1.9 7.8 0c6.1-2.1 10.8-8.5 10.8-8.5s.3-3.4-3.4-6.4c1.4-1.2 2.3-2.3 2.3-2.3z"/></IconWrapper>
+    <IconWrapper {...props} fill="currentColor" strokeWidth="0">
+      <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/>
+    </IconWrapper>
 );
 
 export const YoutubeIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -130,4 +132,8 @@ export const LogOutIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 export const ListMusicIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <IconWrapper {...props}><path d="M11 18h9"/><path d="M11 14h9"/><path d="M11 10h9"/><path d="M11 6h9"/><path d="M5 19.5V7a2 2 0 0 1 2-2h0a2 2 0 0 1 2 2v12.5a2.5 2.5 0 0 1-5 0Z"/><path d="M3 12a2 2 0 1 1 4 0 2 2 0 0 1-4 0Z"/></IconWrapper>
+);
+
+export const CheckCircleIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <IconWrapper {...props}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></IconWrapper>
 );

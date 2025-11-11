@@ -1,8 +1,13 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { ChatMessage } from '../types';
 import { getCourseRecommendation } from '../services/geminiService';
 import { ChatIcon, CloseIcon, SendIcon } from './Icons';
+
+const examplePrompts = [
+  "I want to learn piano",
+  "What's good for a 7-year-old?",
+  "Tell me about vocal classes",
+];
 
 export const CourseAssistant = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -10,7 +15,7 @@ export const CourseAssistant = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       sender: 'ai',
-      text: "Hi there! I'm your personal course assistant. Tell me about your interests, and I'll recommend the perfect music or dance course for you!",
+      text: "Welcome to Jay Music Academy! I'm your AI guide. How can I help you find the perfect course today? You can ask me anything, or try one of these prompts!",
     },
   ]);
   const [isLoading, setIsLoading] = useState(false);
@@ -23,18 +28,17 @@ export const CourseAssistant = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+  
+  const sendMessageAndGetResponse = async (messageText: string) => {
+    if (!messageText.trim() || isLoading) return;
 
-  const handleSendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || isLoading) return;
-
-    const userMessage: ChatMessage = { sender: 'user', text: input };
+    const userMessage: ChatMessage = { sender: 'user', text: messageText };
     setMessages((prev) => [...prev, userMessage]);
-    setInput('');
+    setInput(''); // Clear input if it was used
     setIsLoading(true);
 
     try {
-      const aiResponse = await getCourseRecommendation(input);
+      const aiResponse = await getCourseRecommendation(messageText);
       const aiMessage: ChatMessage = { sender: 'ai', text: aiResponse };
       setMessages((prev) => [...prev, aiMessage]);
     } catch (error) {
@@ -47,6 +51,16 @@ export const CourseAssistant = () => {
       setIsLoading(false);
     }
   };
+
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    sendMessageAndGetResponse(input);
+  };
+  
+  const handlePromptClick = (promptText: string) => {
+    sendMessageAndGetResponse(promptText);
+  };
+
 
   return (
     <>
@@ -99,6 +113,23 @@ export const CourseAssistant = () => {
               </div>
             </div>
           ))}
+          
+          {/* Example Prompts */}
+          {messages.length === 1 && !isLoading && (
+            <div className="flex flex-wrap gap-2 justify-start pt-2">
+              {examplePrompts.map((prompt) => (
+                <button
+                  key={prompt}
+                  onClick={() => handlePromptClick(prompt)}
+                  disabled={isLoading}
+                  className="px-3 py-1.5 bg-accent/80 backdrop-blur-sm border border-border text-accent-foreground rounded-full text-xs hover:bg-secondary hover:text-secondary-foreground transition-colors disabled:opacity-50"
+                >
+                  {prompt}
+                </button>
+              ))}
+            </div>
+           )}
+
           {isLoading && (
              <div className="flex justify-start gap-2">
                 <div className="bg-accent text-accent-foreground rounded-lg px-4 py-2 rounded-bl-none">

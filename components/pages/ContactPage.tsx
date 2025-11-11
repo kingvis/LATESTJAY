@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { MailIcon, PhoneIcon } from '../Icons';
+import { NavLink } from 'react-router-dom';
+import { MailIcon, PhoneIcon, CheckCircleIcon } from '../Icons';
 import { ElegantShape } from '../ui/shape-landing-hero';
 
 export const ContactPage = () => {
@@ -13,7 +14,7 @@ export const ContactPage = () => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         // In a real app, you would handle form submission here
-        setStatus('Thank you for your message! We will get back to you soon.');
+        setStatus(`Thank you for your message, ${formData.name}! We will get back to you soon.`);
         setFormData({ name: '', email: '', message: '' });
     };
 
@@ -56,27 +57,42 @@ export const ContactPage = () => {
                 <div className="grid lg:grid-cols-2 gap-12 items-start">
                     {/* Contact Form */}
                     <div className="bg-card/50 backdrop-blur-xl p-8 rounded-lg border border-border">
-                        <h2 className="text-2xl font-bold text-card-foreground mb-6">Send us a Message</h2>
-                        <form onSubmit={handleSubmit} className="space-y-6">
-                            <div>
-                                <label htmlFor="name" className="block text-sm font-medium text-muted-foreground">Full Name</label>
-                                <input type="text" name="name" id="name" value={formData.name} onChange={handleChange} required className="mt-1 block w-full bg-accent border border-border rounded-md shadow-sm py-2 px-3 text-foreground focus:outline-none focus:ring-ring focus:border-ring"/>
+                        {status ? (
+                            <div className="text-center py-8 flex flex-col items-center justify-center h-full">
+                                <CheckCircleIcon className="h-16 w-16 text-green-500 mx-auto mb-4" />
+                                <h2 className="text-2xl font-bold text-card-foreground mb-2">Message Sent!</h2>
+                                <p className="text-muted-foreground mb-6">{status}</p>
+                                <NavLink 
+                                    to="/" 
+                                    className="inline-block bg-primary text-primary-foreground font-bold py-3 px-8 rounded-full shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-primary/20"
+                                >
+                                    Return to Home
+                                </NavLink>
                             </div>
-                            <div>
-                                <label htmlFor="email" className="block text-sm font-medium text-muted-foreground">Email Address</label>
-                                <input type="email" name="email" id="email" value={formData.email} onChange={handleChange} required className="mt-1 block w-full bg-accent border border-border rounded-md shadow-sm py-2 px-3 text-foreground focus:outline-none focus:ring-ring focus:border-ring"/>
-                            </div>
-                            <div>
-                                <label htmlFor="message" className="block text-sm font-medium text-muted-foreground">Message</label>
-                                <textarea name="message" id="message" rows={4} value={formData.message} onChange={handleChange} required className="mt-1 block w-full bg-accent border border-border rounded-md shadow-sm py-2 px-3 text-foreground focus:outline-none focus:ring-ring focus:border-ring"></textarea>
-                            </div>
-                            <div>
-                                <button type="submit" className="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring transition-all">
-                                    Send Message
-                                </button>
-                            </div>
-                        </form>
-                        {status && <p className="mt-4 text-center text-green-400">{status}</p>}
+                        ) : (
+                            <>
+                                <h2 className="text-2xl font-bold text-card-foreground mb-6">Send us a Message</h2>
+                                <form onSubmit={handleSubmit} className="space-y-6">
+                                    <div>
+                                        <label htmlFor="name" className="block text-sm font-medium text-muted-foreground">Full Name</label>
+                                        <input type="text" name="name" id="name" value={formData.name} onChange={handleChange} required className="mt-1 block w-full bg-accent border border-border rounded-md shadow-sm py-2 px-3 text-foreground focus:outline-none focus:ring-ring focus:border-ring"/>
+                                    </div>
+                                    <div>
+                                        <label htmlFor="email" className="block text-sm font-medium text-muted-foreground">Email Address</label>
+                                        <input type="email" name="email" id="email" value={formData.email} onChange={handleChange} required className="mt-1 block w-full bg-accent border border-border rounded-md shadow-sm py-2 px-3 text-foreground focus:outline-none focus:ring-ring focus:border-ring"/>
+                                    </div>
+                                    <div>
+                                        <label htmlFor="message" className="block text-sm font-medium text-muted-foreground">Message</label>
+                                        <textarea name="message" id="message" rows={4} value={formData.message} onChange={handleChange} required className="mt-1 block w-full bg-accent border border-border rounded-md shadow-sm py-2 px-3 text-foreground focus:outline-none focus:ring-ring focus:border-ring"></textarea>
+                                    </div>
+                                    <div>
+                                        <button type="submit" className="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring transition-all">
+                                            Send Message
+                                        </button>
+                                    </div>
+                                </form>
+                            </>
+                        )}
                     </div>
 
                     {/* Contact Info */}

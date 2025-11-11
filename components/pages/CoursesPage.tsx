@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { COURSES } from '../../constants';
+import { Course } from '../../types';
 import { CourseCard } from '../CourseCard';
+import { CourseDetailModal } from '../CourseDetailModal';
 import { SearchIcon } from '../Icons';
 
 const useAnimateOnScroll = (threshold = 0.1) => {
@@ -38,6 +40,7 @@ export const CoursesPage = () => {
   const [coursesRef, coursesVisible] = useAnimateOnScroll();
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredCourses, setFilteredCourses] = useState(COURSES);
+  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
 
   useEffect(() => {
     const lowercasedFilter = searchTerm.toLowerCase();
@@ -47,6 +50,14 @@ export const CoursesPage = () => {
     );
     setFilteredCourses(filteredData);
   }, [searchTerm]);
+
+  const handleLearnMore = (course: Course) => {
+    setSelectedCourse(course);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedCourse(null);
+  };
   
   return (
     <div className="py-16 md:py-24 overflow-x-hidden min-h-screen">
@@ -87,7 +98,7 @@ export const CoursesPage = () => {
                   className="transition-all duration-500 ease-out"
                   style={{ transitionDelay: `${index * 50}ms`}}
                 >
-                   <CourseCard course={course} />
+                   <CourseCard course={course} onLearnMore={handleLearnMore} />
                 </div>
               ))}
             </div>
@@ -99,6 +110,7 @@ export const CoursesPage = () => {
           )}
         </section>
       </div>
+      <CourseDetailModal course={selectedCourse} onClose={handleCloseModal} />
     </div>
   );
 };

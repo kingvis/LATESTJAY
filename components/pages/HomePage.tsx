@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { COURSES, TESTIMONIALS } from '../../constants';
+import { Course } from '../../types';
 import { CourseCard } from '../CourseCard';
 import { BackgroundPaths } from '../ui/background-paths';
 import { AnimatedTestimonials } from '../ui/animated-testimonials';
+import { CourseDetailModal } from '../CourseDetailModal';
 
 const useAnimateOnScroll = (threshold = 0.1) => {
     const [isVisible, setIsVisible] = useState(false);
@@ -40,6 +42,7 @@ export const HomePage = () => {
   const [coursesRef, coursesVisible] = useAnimateOnScroll();
   const [testimonialsRef, testimonialsVisible] = useAnimateOnScroll();
   const [ctaRef, ctaVisible] = useAnimateOnScroll();
+  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   
   const formattedTestimonials = TESTIMONIALS.map(t => ({
       quote: t.quote,
@@ -47,6 +50,14 @@ export const HomePage = () => {
       designation: `${t.course} Student`,
       src: t.avatar,
   }));
+
+  const handleLearnMore = (course: Course) => {
+    setSelectedCourse(course);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedCourse(null);
+  };
 
   return (
     <div className="space-y-24 md:space-y-32 pb-24 overflow-x-hidden">
@@ -60,6 +71,7 @@ export const HomePage = () => {
 
       {/* Featured Courses */}
       <section 
+        id="featured-courses"
         ref={coursesRef}
         className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-1000 ease-out ${coursesVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
       >
@@ -73,9 +85,17 @@ export const HomePage = () => {
               className="transition-all duration-500 ease-out"
               style={{ transitionDelay: `${index * 100}ms`}}
             >
-               <CourseCard course={course} />
+               <CourseCard course={course} onLearnMore={handleLearnMore} />
             </div>
           ))}
+        </div>
+        <div className="text-center mt-12">
+            <NavLink 
+              to="/courses"
+              className="inline-block bg-secondary text-secondary-foreground font-bold py-3 px-8 rounded-full shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-secondary/20"
+            >
+              View All Courses
+            </NavLink>
         </div>
       </section>
 
@@ -101,7 +121,7 @@ export const HomePage = () => {
                 Book a free demo class or enroll today to join our vibrant community of artists.
             </p>
             <NavLink
-                to="/contact"
+                to="/enroll"
                 className="inline-block bg-primary text-primary-foreground font-bold py-3 px-8 rounded-full shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-primary/20"
             >
                 Enroll Now
@@ -109,6 +129,7 @@ export const HomePage = () => {
         </div>
       </section>
 
+      <CourseDetailModal course={selectedCourse} onClose={handleCloseModal} />
     </div>
   );
 };

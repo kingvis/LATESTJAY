@@ -1,16 +1,44 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate, NavLink } from 'react-router-dom';
+import { cn } from '../../lib/utils';
 
 export const SignInPage = () => {
     const { login } = useAuth();
     const navigate = useNavigate();
+    const [email, setEmail] = useState('test@example.com');
+    const [password, setPassword] = useState('password');
+    const [errors, setErrors] = useState({ email: '', password: '' });
+
+    const validate = () => {
+        const newErrors = { email: '', password: '' };
+        let isValid = true;
+
+        if (!email) {
+            newErrors.email = 'Email is required.';
+            isValid = false;
+        } else if (!/\S+@\S+\.\S+/.test(email)) {
+            newErrors.email = 'Email address is invalid.';
+            isValid = false;
+        }
+
+        if (!password) {
+            newErrors.password = 'Password is required.';
+            isValid = false;
+        }
+
+        setErrors(newErrors);
+        return isValid;
+    };
+
 
     const handleSignIn = (e: React.FormEvent) => {
         e.preventDefault();
-        // In a real app, you would validate credentials
-        login();
-        navigate('/ai-studio');
+        if (validate()) {
+            // In a real app, you would validate credentials
+            login();
+            navigate('/ai-studio');
+        }
     };
 
     return (
@@ -20,11 +48,33 @@ export const SignInPage = () => {
                 <form onSubmit={handleSignIn} className="space-y-6">
                     <div>
                         <label htmlFor="email" className="block text-sm font-medium text-muted-foreground">Email</label>
-                        <input type="email" id="email" className="mt-1 block w-full bg-accent border border-border rounded-md shadow-sm py-2 px-3 text-foreground focus:outline-none focus:ring-ring focus:border-ring" defaultValue="test@example.com" required />
+                        <input 
+                            type="email" 
+                            id="email" 
+                            className={cn(
+                                "mt-1 block w-full bg-accent border border-border rounded-md shadow-sm py-2 px-3 text-foreground focus:outline-none focus:ring-ring focus:border-ring",
+                                { "border-destructive focus:border-destructive": errors.email }
+                            )}
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required 
+                        />
+                        {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
                     </div>
                     <div>
                         <label htmlFor="password" className="block text-sm font-medium text-muted-foreground">Password</label>
-                        <input type="password" id="password" className="mt-1 block w-full bg-accent border border-border rounded-md shadow-sm py-2 px-3 text-foreground focus:outline-none focus:ring-ring focus:border-ring" defaultValue="password" required />
+                        <input 
+                            type="password" 
+                            id="password" 
+                             className={cn(
+                                "mt-1 block w-full bg-accent border border-border rounded-md shadow-sm py-2 px-3 text-foreground focus:outline-none focus:ring-ring focus:border-ring",
+                                { "border-destructive focus:border-destructive": errors.password }
+                            )}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required 
+                        />
+                        {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
                     </div>
                     <button type="submit" className="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-secondary bg-secondary-foreground hover:bg-secondary-foreground/80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring transition-all">
                         Sign In

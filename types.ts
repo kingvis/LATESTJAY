@@ -1,4 +1,3 @@
-
 import { ReactNode } from 'react';
 
 export interface Course {
@@ -8,6 +7,9 @@ export interface Course {
   icon: ReactNode;
   level?: string;
   imageUrl?: string;
+  instructor: string;
+  schedule: string;
+  prerequisites: string[];
 }
 
 export interface Testimonial {

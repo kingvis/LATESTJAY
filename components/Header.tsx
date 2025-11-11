@@ -13,9 +13,9 @@ export const Header = () => {
   const commonLinks = [
     { to: '/', text: 'Home' },
     { to: '/about', text: 'About' },
-    { to: '/courses', text: 'Courses' },
+    { to: '/#featured-courses', text: 'Courses' },
     { to: '/branches', text: 'Branches' },
-    { to: '/contact', text: 'Contact' },
+    { to: '/#contact', text: 'Contact' },
   ];
 
   const authLinks = [
