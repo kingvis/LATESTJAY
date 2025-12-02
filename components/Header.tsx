@@ -13,16 +13,18 @@ export const Header = () => {
   const commonLinks = [
     { to: '/', text: 'Home' },
     { to: '/about', text: 'About' },
-    { to: '/#featured-courses', text: 'Courses' },
+    { to: '/courses', text: 'Courses' },
     { to: '/branches', text: 'Branches' },
-    { to: '/#contact', text: 'Contact' },
+    { to: '/pricing', text: 'Pricing' },
+    { to: '/contact', text: 'Contact' },
   ];
 
   const authLinks = [
     ...commonLinks,
-    { to: '/ai-studio', text: 'AI Studio' },
+    // { to: '/ai-studio', text: 'AI Studio' }, // Backup for next sprint
+    { to: '/dashboard', text: 'Dashboard' },
   ];
-  
+
   const navLinks = isAuthenticated ? authLinks : commonLinks;
 
   const handleLogout = () => {
@@ -30,7 +32,7 @@ export const Header = () => {
     setIsUserMenuOpen(false);
     setIsOpen(false);
   };
-  
+
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -61,10 +63,9 @@ export const Header = () => {
                   key={link.to}
                   to={link.to}
                   className={({ isActive }) =>
-                    `px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                      isActive
-                        ? 'bg-secondary text-secondary-foreground'
-                        : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                    `px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive
+                      ? 'bg-secondary text-secondary-foreground'
+                      : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                     }`
                   }
                 >
@@ -74,32 +75,32 @@ export const Header = () => {
             </nav>
             <ThemeToggle />
             {isAuthenticated ? (
-                 <div className="relative" ref={userMenuRef}>
-                    <button onClick={() => setIsUserMenuOpen(!isUserMenuOpen)} className="flex items-center justify-center h-10 w-10 rounded-full bg-accent text-accent-foreground hover:bg-secondary/20 focus:outline-none focus:ring-2 focus:ring-ring">
-                        <UserIcon className="h-5 w-5" />
+              <div className="relative" ref={userMenuRef}>
+                <button onClick={() => setIsUserMenuOpen(!isUserMenuOpen)} className="flex items-center justify-center h-10 w-10 rounded-full bg-accent text-accent-foreground hover:bg-secondary/20 focus:outline-none focus:ring-2 focus:ring-ring">
+                  <UserIcon className="h-5 w-5" />
+                </button>
+                {isUserMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-card rounded-md shadow-lg py-1 border border-border">
+                    <button onClick={handleLogout} className="w-full text-left flex items-center px-4 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground">
+                      <LogOutIcon className="mr-2 h-4 w-4" />
+                      Sign Out
                     </button>
-                    {isUserMenuOpen && (
-                        <div className="absolute right-0 mt-2 w-48 bg-card rounded-md shadow-lg py-1 border border-border">
-                            <button onClick={handleLogout} className="w-full text-left flex items-center px-4 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground">
-                                <LogOutIcon className="mr-2 h-4 w-4" />
-                                Sign Out
-                            </button>
-                        </div>
-                    )}
-                </div>
+                  </div>
+                )}
+              </div>
             ) : (
-                <div className="flex items-center space-x-2">
-                    <NavLink to="/signin" className="px-4 py-2 rounded-md text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
-                        Sign In
-                    </NavLink>
-                    <NavLink to="/signup" className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-md text-sm font-medium transition-colors">
-                        Sign Up
-                    </NavLink>
-                </div>
+              <div className="flex items-center space-x-2">
+                <NavLink to="/signin" className="px-4 py-2 rounded-md text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
+                  Sign In
+                </NavLink>
+                <NavLink to="/signup" className="bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                  Sign Up
+                </NavLink>
+              </div>
             )}
           </div>
           <div className="md:hidden flex items-center gap-2">
-             <ThemeToggle />
+            <ThemeToggle />
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="inline-flex items-center justify-center p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent focus:outline-none focus:ring-2 focus:ring-inset focus:ring-ring"
@@ -127,21 +128,20 @@ export const Header = () => {
                 to={link.to}
                 onClick={() => setIsOpen(false)}
                 className={({ isActive }) =>
-                  `block px-3 py-2 rounded-md text-base font-medium ${
-                    isActive
-                      ? 'bg-secondary text-secondary-foreground'
-                      : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                  `block px-3 py-2 rounded-md text-base font-medium ${isActive
+                    ? 'bg-secondary text-secondary-foreground'
+                    : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                   }`
                 }
               >
                 {link.text}
               </NavLink>
             ))}
-             <div className="border-t border-border pt-4 mt-4">
+            <div className="border-t border-border pt-4 mt-4">
               {isAuthenticated ? (
-                 <button onClick={handleLogout} className="w-full text-left flex items-center px-3 py-2 text-base font-medium rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground">
-                    <LogOutIcon className="mr-3 h-5 w-5" />
-                    Sign Out
+                <button onClick={handleLogout} className="w-full text-left flex items-center px-3 py-2 text-base font-medium rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground">
+                  <LogOutIcon className="mr-3 h-5 w-5" />
+                  Sign Out
                 </button>
               ) : (
                 <>

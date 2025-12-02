@@ -1,4 +1,4 @@
-import { GoogleGenAI, LiveServerMessage, Modality, Blob, LiveSession } from "@google/genai";
+import { GoogleGenAI, LiveServerMessage, Modality, Blob } from "@google/genai";
 import React, { useState, useRef, useEffect } from 'react';
 import { decode, decodeAudioData, encode } from '../../services/geminiService';
 import { MicrophoneIcon, StopIcon } from '../Icons';
@@ -9,8 +9,8 @@ const LiveAssistant = () => {
     const [connectionState, setConnectionState] = useState<ConnectionState>('IDLE');
     const [inputTranscription, setInputTranscription] = useState('');
     const [outputTranscription, setOutputTranscription] = useState('');
-    
-    const sessionPromiseRef = useRef<Promise<LiveSession> | null>(null);
+
+    const sessionPromiseRef = useRef<Promise<any> | null>(null);
     const audioContextRef = useRef<AudioContext | null>(null);
     const scriptProcessorRef = useRef<ScriptProcessorNode | null>(null);
     const mediaStreamSourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
@@ -19,6 +19,11 @@ const LiveAssistant = () => {
     const outputAudioContextRef = useRef<AudioContext | null>(null);
     const nextStartTimeRef = useRef(0);
     const audioSourcesRef = useRef<Set<AudioBufferSourceNode>>(new Set());
+
+    // Visualizer refs
+    const analyserRef = useRef<AnalyserNode | null>(null);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const animationFrameRef = useRef<number | null>(null);
 
     const stopConversation = () => {
         if (sessionPromiseRef.current) {
@@ -39,11 +44,17 @@ const LiveAssistant = () => {
             mediaStreamSourceRef.current.disconnect();
             mediaStreamSourceRef.current = null;
         }
+
+        if (analyserRef.current) {
+            analyserRef.current.disconnect();
+            analyserRef.current = null;
+        }
+
         if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
             audioContextRef.current.close();
             audioContextRef.current = null;
         }
-        
+
         // Stop any currently playing/queued audio from the AI
         for (const source of audioSourcesRef.current.values()) {
             source.stop();
@@ -52,29 +63,74 @@ const LiveAssistant = () => {
         nextStartTimeRef.current = 0;
 
         if (outputAudioContextRef.current && outputAudioContextRef.current.state !== 'closed') {
-             outputAudioContextRef.current.close();
-             outputAudioContextRef.current = null;
+            outputAudioContextRef.current.close();
+            outputAudioContextRef.current = null;
+        }
+
+        if (animationFrameRef.current) {
+            cancelAnimationFrame(animationFrameRef.current);
+            animationFrameRef.current = null;
         }
 
         setConnectionState('IDLE');
+    };
+
+    const drawVisualizer = () => {
+        if (!analyserRef.current || !canvasRef.current) return;
+
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        const bufferLength = analyserRef.current.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+
+        const draw = () => {
+            if (!analyserRef.current) return;
+
+            animationFrameRef.current = requestAnimationFrame(draw);
+            analyserRef.current.getByteFrequencyData(dataArray);
+
+            ctx.fillStyle = 'rgb(20, 20, 20)'; // Match card background roughly
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const barWidth = (canvas.width / bufferLength) * 2.5;
+            let barHeight;
+            let x = 0;
+
+            for (let i = 0; i < bufferLength; i++) {
+                barHeight = dataArray[i] / 2;
+
+                const r = barHeight + 25 * (i / bufferLength);
+                const g = 250 * (i / bufferLength);
+                const b = 50;
+
+                ctx.fillStyle = `rgb(${r},${g},${b})`;
+                ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+
+                x += barWidth + 1;
+            }
+        };
+
+        draw();
     };
 
     const startConversation = async () => {
         setConnectionState('CONNECTING');
         setInputTranscription('');
         setOutputTranscription('');
-        
+
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             mediaStreamRef.current = stream;
 
             const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-            
+
             // Cast window to any to support webkitAudioContext for older browsers without TS errors.
             outputAudioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
             nextStartTimeRef.current = 0;
             audioSourcesRef.current.clear(); // Clear any stale sources
-            
+
             sessionPromiseRef.current = ai.live.connect({
                 model: 'gemini-2.5-flash-native-audio-preview-09-2025',
                 callbacks: {
@@ -82,9 +138,16 @@ const LiveAssistant = () => {
                         setConnectionState('CONNECTED');
                         // Cast window to any to support webkitAudioContext for older browsers without TS errors.
                         audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 16000 });
-                        
+
                         const source = audioContextRef.current.createMediaStreamSource(stream);
                         mediaStreamSourceRef.current = source;
+
+                        // Setup Analyser
+                        const analyser = audioContextRef.current.createAnalyser();
+                        analyser.fftSize = 256;
+                        source.connect(analyser);
+                        analyserRef.current = analyser;
+                        drawVisualizer();
 
                         const scriptProcessor = audioContextRef.current.createScriptProcessor(4096, 1, 1);
                         scriptProcessorRef.current = scriptProcessor;
@@ -100,6 +163,9 @@ const LiveAssistant = () => {
                                 session.sendRealtimeInput({ media: pcmBlob });
                             });
                         };
+                        // Connect through analyser to script processor if needed, or parallel
+                        // Source -> Analyser
+                        // Source -> ScriptProcessor -> Destination
                         source.connect(scriptProcessor);
                         scriptProcessor.connect(audioContextRef.current.destination);
                     },
@@ -148,7 +214,7 @@ const LiveAssistant = () => {
                         stopConversation();
                     },
                     onclose: () => {
-                       setConnectionState('DISCONNECTED');
+                        setConnectionState('DISCONNECTED');
                     },
                 },
                 config: {
@@ -163,7 +229,7 @@ const LiveAssistant = () => {
             setConnectionState('ERROR');
         }
     };
-    
+
     useEffect(() => {
         // Cleanup on component unmount
         return () => {
@@ -182,7 +248,7 @@ const LiveAssistant = () => {
             case 'ERROR': return { text: 'An error occurred. Please try again.', color: 'text-red-500' };
         }
     };
-    
+
     const { text: statusText, color: statusColor } = getStatusTextAndColor();
 
     return (
@@ -191,6 +257,17 @@ const LiveAssistant = () => {
                 <h3 className="text-xl font-bold text-foreground">AI Vocal Coach</h3>
                 <p className="text-muted-foreground">Speak with an AI vocal coach in real-time. Practice scales, ask theory questions, or get feedback.</p>
             </div>
+
+            {/* Visualizer Canvas */}
+            <div className="flex justify-center">
+                <canvas
+                    ref={canvasRef}
+                    width="300"
+                    height="100"
+                    className="rounded-lg bg-card border border-border shadow-inner"
+                />
+            </div>
+
             <div className="flex justify-center items-center my-6">
                 <button
                     onClick={isConversing ? stopConversation : startConversation}
@@ -200,7 +277,7 @@ const LiveAssistant = () => {
                 </button>
             </div>
             <p className={`font-semibold ${statusColor}`}>{statusText}</p>
-            
+
             <div className="text-left bg-accent/50 p-4 rounded-lg min-h-[120px] border border-border">
                 <p><strong className="text-secondary">You:</strong> {inputTranscription}</p>
                 <p><strong className="text-foreground">Coach:</strong> {outputTranscription}</p>
