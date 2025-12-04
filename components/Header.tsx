@@ -7,7 +7,7 @@ import { LogOutIcon, UserIcon } from './Icons';
 export const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, user } = useAuth();
   const userMenuRef = useRef<HTMLDivElement>(null);
 
   const commonLinks = [
@@ -22,7 +22,8 @@ export const Header = () => {
   const authLinks = [
     ...commonLinks,
     // { to: '/ai-studio', text: 'AI Studio' }, // Backup for next sprint
-    { to: '/dashboard', text: 'Dashboard' },
+    ...(user?.role !== 'admin' ? [{ to: '/dashboard', text: 'Dashboard' }] : []),
+    ...(user?.role === 'admin' ? [{ to: '/staff-dashboard', text: 'Staff Analysis' }] : []),
   ];
 
   const navLinks = isAuthenticated ? authLinks : commonLinks;

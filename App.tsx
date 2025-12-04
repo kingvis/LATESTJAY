@@ -1,5 +1,5 @@
 import React from 'react';
-import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
@@ -16,6 +16,7 @@ import { SignInPage } from './components/pages/SignInPage';
 import { SignUpPage } from './components/pages/SignUpPage';
 import { EnrollPage } from './components/pages/EnrollPage';
 import { PricingPage } from './components/pages/PricingPage';
+import { StaffDashboard } from './components/pages/StaffDashboard';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { ScrollManager } from './components/ScrollManager';
 import { PageTransition } from './components/PageTransition';
@@ -47,10 +48,18 @@ const AppContent = () => {
                 </ProtectedRoute>
               </PageTransition>
             } />
+            <Route path="/staff-dashboard" element={
+              <PageTransition>
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <StaffDashboard />
+                </ProtectedRoute>
+              </PageTransition>
+            } />
             <Route path="/signin" element={<PageTransition><SignInPage /></PageTransition>} />
             <Route path="/signup" element={<PageTransition><SignUpPage /></PageTransition>} />
             <Route path="/enroll" element={<PageTransition><EnrollPage /></PageTransition>} />
             <Route path="/pricing" element={<PageTransition><PricingPage /></PageTransition>} />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </AnimatePresence>
       </main>

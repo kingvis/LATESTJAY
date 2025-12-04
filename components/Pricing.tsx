@@ -1,61 +1,34 @@
 'use client';
-import React from 'react';
-import { PlusIcon, ShieldCheckIcon, CheckIcon } from 'lucide-react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { PlusIcon, ShieldCheckIcon, CheckIcon, XIcon } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
 import { BorderTrail } from './ui/border-trail';
 import { useAuth } from '../contexts/AuthContext';
-import useRazorpay from 'react-razorpay';
 import axios from 'axios';
 
 export function Pricing() {
     const { user } = useAuth();
-    const [Razorpay] = useRazorpay();
-    const isStudent = !user || user.role === 'student';
-    const isTeacher = !user || user.role === 'teacher';
+    const isAdmin = user?.role === 'admin';
+    const isStudent = !user || user.role === 'student' || isAdmin;
+    const isTeacher = !user || user.role === 'teacher' || isAdmin;
+    const [showPaymentModal, setShowPaymentModal] = useState(false);
+    const [selectedPlan, setSelectedPlan] = useState('');
+    const [paymentDetails, setPaymentDetails] = useState<any>(null);
 
-    const handlePayment = async (amount: number, planName: string) => {
-        try {
-            // 1. Create order on backend
-            const { data: order } = await axios.post('http://localhost:5000/create-order', {
-                amount: amount,
-                currency: 'INR',
-            });
-
-            // 2. Initialize Razorpay options
-            const options = {
-                key: 'rzp_test_placeholder', // Replace with your actual key
-                amount: order.amount,
-                currency: order.currency,
-                name: 'Jay Music Academy',
-                description: `Payment for ${planName}`,
-                order_id: order.id,
-                handler: (response: any) => {
-                    console.log(response);
-                    alert(`Payment Successful! Payment ID: ${response.razorpay_payment_id}`);
-                },
-                prefill: {
-                    name: user?.name || 'Test User',
-                    email: user?.email || 'test@example.com',
-                    contact: '9999999999',
-                },
-                theme: {
-                    color: '#3399cc',
-                },
-            };
-
-            // 3. Open Razorpay checkout
-            const rzp1 = new Razorpay(options);
-            rzp1.on('payment.failed', function (response: any) {
-                alert(response.error.description);
-            });
-            rzp1.open();
-        } catch (error) {
-            console.error('Payment Error:', error);
-            alert('Payment failed. Please try again.');
+    useEffect(() => {
+        if (showPaymentModal) {
+            axios.get('http://localhost:5000/config/paymentDetails')
+                .then(res => setPaymentDetails(res.data))
+                .catch(err => console.error(err));
         }
+    }, [showPaymentModal]);
+
+    const handlePayment = (amount: number, planName: string) => {
+        setSelectedPlan(`${planName} - $${amount}`);
+        setShowPaymentModal(true);
     };
 
     return (
@@ -252,6 +225,98 @@ export function Pricing() {
                     )}
                 </div>
             </div>
+
+            {/* Manual Payment Modal */}
+            <AnimatePresence>
+                {showPaymentModal && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+                    >
+                        <motion.div
+                            initial={{ scale: 0.95, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.95, opacity: 0 }}
+                            className="bg-background border rounded-xl shadow-xl w-full max-w-md p-6 relative"
+                        >
+                            <button
+                                onClick={() => setShowPaymentModal(false)}
+                                className="absolute top-4 right-4 text-muted-foreground hover:text-foreground"
+                            >
+                                <XIcon className="size-5" />
+                            </button>
+
+                            <h2 className="text-2xl font-bold mb-2">Complete Your Payment</h2>
+                            <p className="text-muted-foreground mb-6">
+                                Please transfer the amount for <strong>{selectedPlan}</strong> to the account below.
+                            </p>
+
+                            {paymentDetails ? (
+                                <div className="space-y-4 bg-muted/30 p-4 rounded-lg border">
+                                    <div className="flex justify-between">
+                                        <span className="font-medium text-muted-foreground">Bank Name:</span>
+                                        <span className="font-bold">{paymentDetails.bankName || 'Not Configured'}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="font-medium text-muted-foreground">Account No:</span>
+                                        <span className="font-mono font-bold">{paymentDetails.accountNumber || 'Not Configured'}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="font-medium text-muted-foreground">IFSC Code:</span>
+                                        <span className="font-mono font-bold">{paymentDetails.ifscCode || 'Not Configured'}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span className="font-medium text-muted-foreground">UPI ID:</span>
+                                        <div className="flex items-center gap-2">
+                                            <span className="font-mono font-bold">{paymentDetails.upiId || 'Not Configured'}</span>
+                                            {paymentDetails.upiId && (
+                                                <Badge variant="outline" className="text-xs">UPI</Badge>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="text-center py-8 text-muted-foreground">
+                                    Loading payment details...
+                                </div>
+                            )}
+
+                            <div className="mt-6 text-sm text-muted-foreground text-center">
+                                <p>After payment, please send a screenshot to <strong>admin@jaymusic.com</strong> for activation.</p>
+                            </div>
+
+                            <Button
+                                className="w-full mt-6"
+                                onClick={async () => {
+                                    if (!user) {
+                                        alert("Please sign in to record your payment.");
+                                        return;
+                                    }
+                                    try {
+                                        const amountMatch = selectedPlan.match(/\$(\d+)/);
+                                        const amount = amountMatch ? parseInt(amountMatch[1]) : 0;
+
+                                        await axios.post('http://localhost:5000/payments/manual', {
+                                            userId: user.id,
+                                            amount: amount,
+                                            type: 'course_fee'
+                                        });
+                                        alert("Payment recorded! Please wait for admin approval.");
+                                        setShowPaymentModal(false);
+                                    } catch (err) {
+                                        console.error(err);
+                                        alert("Failed to record payment. Please try again.");
+                                    }
+                                }}
+                            >
+                                I Have Made the Payment
+                            </Button>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </section>
     );
 }

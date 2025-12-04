@@ -1,11 +1,14 @@
 import React from 'react';
 import { Pricing } from '../Pricing';
 import { PageTransition } from '../PageTransition';
+import { ErrorBoundary } from '../ErrorBoundary';
 
 export const PricingPage = () => {
     return (
         <PageTransition>
-            <Pricing />
+            <ErrorBoundary>
+                <Pricing />
+            </ErrorBoundary>
         </PageTransition>
     );
 };

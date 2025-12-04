@@ -1,134 +1,179 @@
 import React, { useState } from 'react';
-import { useAuth, UserRole } from '../../contexts/AuthContext';
-import { useNavigate, NavLink } from 'react-router-dom';
-import { cn } from '../../lib/utils';
+import { motion } from 'framer-motion';
+import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
+import axios from 'axios';
 
 export const SignUpPage = () => {
-    const { login } = useAuth();
     const navigate = useNavigate();
-    const [formData, setFormData] = useState({ name: '', email: '', password: '', role: 'student' as UserRole });
-    const [errors, setErrors] = useState({ name: '', email: '', password: '' });
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        setFormData({ ...formData, [e.target.id]: e.target.value });
-    };
+    const { login } = useAuth();
+    const [formData, setFormData] = useState({ name: '', email: '', password: '', role: 'student' });
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const validate = () => {
-        const newErrors = { name: '', email: '', password: '' };
-        let isValid = true;
-
-        if (!formData.name.trim()) {
-            newErrors.name = 'Full Name is required.';
-            isValid = false;
+        if (!formData.name || !formData.email || !formData.password) {
+            setError('All fields are required');
+            return false;
         }
-
-        if (!formData.email) {
-            newErrors.email = 'Email is required.';
-            isValid = false;
-        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-            newErrors.email = 'Email address is invalid.';
-            isValid = false;
+        if (formData.password.length < 6) {
+            setError('Password must be at least 6 characters');
+            return false;
         }
-
-        if (!formData.password) {
-            newErrors.password = 'Password is required.';
-            isValid = false;
-        } else if (formData.password.length < 8) {
-            newErrors.password = 'Password must be at least 8 characters long.';
-            isValid = false;
-        }
-
-        setErrors(newErrors);
-        return isValid;
+        return true;
     };
 
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { id, value } = e.target;
+        let newFormData = { ...formData, [id]: value };
 
-    const handleSignUp = (e: React.FormEvent) => {
+        // Auto-detect Admin role for @jay.com
+        if (id === 'email') {
+            if (value.endsWith('@jay.com')) {
+                newFormData.role = 'admin';
+            } else if (formData.role === 'admin') {
+                // Reset to student if changing away from jay.com and was admin
+                newFormData.role = 'student';
+            }
+        }
+
+        setFormData(newFormData);
+        setError('');
+    };
+
+    const handleSignUp = async (e: React.FormEvent) => {
         e.preventDefault();
         if (validate()) {
-            // In a real app, you would create a new user
-            login({
-                name: formData.name,
-                email: formData.email,
-                role: formData.role
-            });
-            navigate('/dashboard');
+            setLoading(true);
+            try {
+                // Call backend API
+                const response = await axios.post('http://localhost:5000/signup', formData);
+
+                // If successful, log the user in locally
+                login({
+                    id: response.data.user._id,
+                    name: response.data.user.name,
+                    email: response.data.user.email,
+                    role: response.data.user.role as 'student' | 'teacher' | 'admin'
+                });
+
+                navigate('/dashboard');
+            } catch (err: any) {
+                console.error('Signup failed:', err);
+                setError(err.response?.data?.message || 'Failed to create account. Please try again.');
+            } finally {
+                setLoading(false);
+            }
         }
     };
 
     return (
-        <div className="py-16 md:py-24 flex items-center justify-center">
-            <div className="max-w-md w-full mx-auto p-8 bg-card/50 backdrop-blur-sm rounded-lg border border-border">
-                <h1 className="text-3xl font-bold text-center mb-6">Sign Up</h1>
-                <form onSubmit={handleSignUp} className="space-y-6">
-                    <div>
-                        <label htmlFor="name" className="block text-sm font-medium text-muted-foreground">Full Name</label>
-                        <input
-                            type="text"
-                            id="name"
-                            className={cn(
-                                "mt-1 block w-full bg-accent border border-border rounded-md shadow-sm py-2 px-3 text-foreground focus:outline-none focus:ring-ring focus:border-ring",
-                                { "border-destructive focus:border-destructive": errors.name }
+        <div className="min-h-screen pt-20 pb-12 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="w-full max-w-md space-y-8"
+            >
+                <div>
+                    <h2 className="mt-6 text-center text-3xl font-extrabold text-foreground">
+                        Create your account
+                    </h2>
+                    <p className="mt-2 text-center text-sm text-muted-foreground">
+                        Join Jay Music Academy today
+                    </p>
+                </div>
+                <form className="mt-8 space-y-6" onSubmit={handleSignUp}>
+                    <div className="rounded-md shadow-sm space-y-4">
+                        <div>
+                            <label htmlFor="name" className="sr-only">Full Name</label>
+                            <input
+                                id="name"
+                                name="name"
+                                type="text"
+                                required
+                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-border placeholder-muted-foreground text-foreground rounded-t-md focus:outline-none focus:ring-ring focus:border-ring focus:z-10 sm:text-sm bg-background"
+                                placeholder="Full Name"
+                                value={formData.name}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="email" className="sr-only">Email address</label>
+                            <input
+                                id="email"
+                                name="email"
+                                type="email"
+                                autoComplete="email"
+                                required
+                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-border placeholder-muted-foreground text-foreground focus:outline-none focus:ring-ring focus:border-ring focus:z-10 sm:text-sm bg-background"
+                                placeholder="Email address"
+                                value={formData.email}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="password" className="sr-only">Password</label>
+                            <input
+                                id="password"
+                                name="password"
+                                type="password"
+                                autoComplete="new-password"
+                                required
+                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-border placeholder-muted-foreground text-foreground rounded-b-md focus:outline-none focus:ring-ring focus:border-ring focus:z-10 sm:text-sm bg-background"
+                                placeholder="Password"
+                                value={formData.password}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="role" className="block text-sm font-medium text-muted-foreground mb-1">I am a...</label>
+                            <select
+                                id="role"
+                                className="block w-full bg-background border border-border rounded-md shadow-sm py-2 px-3 text-foreground focus:outline-none focus:ring-ring focus:border-ring sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                                value={formData.role}
+                                onChange={handleChange}
+                                disabled={formData.email.endsWith('@jay.com')}
+                            >
+                                {formData.email.endsWith('@jay.com') ? (
+                                    <option value="admin">Admin Staff</option>
+                                ) : (
+                                    <>
+                                        <option value="student">Student</option>
+                                        <option value="teacher">Teacher</option>
+                                    </>
+                                )}
+                            </select>
+                            {formData.email.endsWith('@jay.com') && (
+                                <p className="text-xs text-muted-foreground mt-1">
+                                    * @jay.com emails are automatically assigned as Admin Staff.
+                                </p>
                             )}
-                            value={formData.name}
-                            onChange={handleChange}
-                            required
-                        />
-                        {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+                        </div>
                     </div>
+
+                    {error && (
+                        <div className="text-red-500 text-sm text-center">
+                            {error}
+                        </div>
+                    )}
+
                     <div>
-                        <label htmlFor="email" className="block text-sm font-medium text-muted-foreground">Email</label>
-                        <input
-                            type="email"
-                            id="email"
-                            className={cn(
-                                "mt-1 block w-full bg-accent border border-border rounded-md shadow-sm py-2 px-3 text-foreground focus:outline-none focus:ring-ring focus:border-ring",
-                                { "border-destructive focus:border-destructive": errors.email }
-                            )}
-                            value={formData.email}
-                            onChange={handleChange}
-                            required
-                        />
-                        {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
-                    </div>
-                    <div>
-                        <label htmlFor="password" className="block text-sm font-medium text-muted-foreground">Password</label>
-                        <input
-                            type="password"
-                            id="password"
-                            className={cn(
-                                "mt-1 block w-full bg-accent border border-border rounded-md shadow-sm py-2 px-3 text-foreground focus:outline-none focus:ring-ring focus:border-ring",
-                                { "border-destructive focus:border-destructive": errors.password }
-                            )}
-                            value={formData.password}
-                            onChange={handleChange}
-                            required
-                        />
-                        {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
-                    </div>
-                    <div>
-                        <label htmlFor="role" className="block text-sm font-medium text-muted-foreground">I am a...</label>
-                        <select
-                            id="role"
-                            className="mt-1 block w-full bg-accent border border-border rounded-md shadow-sm py-2 px-3 text-foreground focus:outline-none focus:ring-ring focus:border-ring"
-                            value={formData.role}
-                            onChange={handleChange}
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring disabled:opacity-50"
                         >
-                            <option value="student">Student</option>
-                            <option value="teacher">Teacher</option>
-                        </select>
+                            {loading ? 'Creating Account...' : 'Sign up'}
+                        </button>
                     </div>
-                    <button type="submit" className="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-secondary bg-secondary-foreground hover:bg-secondary-foreground/80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring transition-all">
-                        Sign Up
-                    </button>
+                    <div className="text-center text-sm">
+                        <span className="text-muted-foreground">Already have an account? </span>
+                        <Link to="/signin" className="font-medium text-primary hover:text-primary/80">
+                            Sign in
+                        </Link>
+                    </div>
                 </form>
-                <p className="mt-6 text-center text-sm text-muted-foreground">
-                    Already have an account?{' '}
-                    <NavLink to="/signin" className="font-medium text-secondary hover:underline">
-                        Sign in
-                    </NavLink>
-                </p>
-            </div>
+            </motion.div>
         </div>
     );
 };
