@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import axios from 'axios';
 
 export const SignInPage = () => {
     const navigate = useNavigate();
-    const { login } = useAuth();
+    const { login, loading: authLoading } = useAuth();
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -25,25 +24,23 @@ export const SignInPage = () => {
 
         setLoading(true);
         try {
-            // Call backend API
-            const response = await axios.post('http://localhost:5000/signin', formData);
-
-            // If successful, log the user in locally
-            login({
-                id: response.data.user.id,
-                name: response.data.user.name,
-                email: response.data.user.email,
-                role: response.data.user.role as 'student' | 'teacher'
-            });
-
+            await login(formData.email, formData.password);
             navigate('/dashboard');
         } catch (err: any) {
             console.error('Signin failed:', err);
-            setError(err.response?.data?.message || 'Invalid email or password');
+            setError(err.message || 'Invalid email or password');
         } finally {
             setLoading(false);
         }
     };
+
+    if (authLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen pt-20 pb-12 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
@@ -93,7 +90,7 @@ export const SignInPage = () => {
                     </div>
 
                     {error && (
-                        <div className="text-red-500 text-sm text-center">
+                        <div className="text-red-500 text-sm text-center bg-red-50 dark:bg-red-900/20 p-3 rounded-md">
                             {error}
                         </div>
                     )}
@@ -104,7 +101,15 @@ export const SignInPage = () => {
                             disabled={loading}
                             className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring disabled:opacity-50"
                         >
-                            {loading ? 'Signing In...' : 'Sign in'}
+                            {loading ? (
+                                <span className="flex items-center gap-2">
+                                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                    </svg>
+                                    Signing In...
+                                </span>
+                            ) : 'Sign in'}
                         </button>
                     </div>
                     <div className="text-center text-sm">

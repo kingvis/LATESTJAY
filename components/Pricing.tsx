@@ -1,13 +1,13 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { PlusIcon, ShieldCheckIcon, CheckIcon, XIcon } from 'lucide-react';
+import { PlusIcon, ShieldCheckIcon, CheckIcon, XIcon, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
 import { BorderTrail } from './ui/border-trail';
 import { useAuth } from '../contexts/AuthContext';
-import axios from 'axios';
+import { createPayment, getPaymentConfig } from '../services/paymentService';
 
 export function Pricing() {
     const { user } = useAuth();
@@ -16,19 +16,67 @@ export function Pricing() {
     const isTeacher = !user || user.role === 'teacher' || isAdmin;
     const [showPaymentModal, setShowPaymentModal] = useState(false);
     const [selectedPlan, setSelectedPlan] = useState('');
+    const [selectedAmount, setSelectedAmount] = useState(0);
     const [paymentDetails, setPaymentDetails] = useState<any>(null);
+    const [loading, setLoading] = useState(false);
+    const [paymentSuccess, setPaymentSuccess] = useState(false);
+    const [error, setError] = useState('');
 
     useEffect(() => {
         if (showPaymentModal) {
-            axios.get('http://localhost:5000/config/paymentDetails')
-                .then(res => setPaymentDetails(res.data))
-                .catch(err => console.error(err));
+            setLoading(true);
+            getPaymentConfig()
+                .then(config => setPaymentDetails(config))
+                .catch(err => {
+                    console.error('Failed to load payment config:', err);
+                    setError('Failed to load payment details');
+                })
+                .finally(() => setLoading(false));
+        } else {
+            // Reset state when modal closes
+            setPaymentSuccess(false);
+            setError('');
         }
     }, [showPaymentModal]);
 
     const handlePayment = (amount: number, planName: string) => {
-        setSelectedPlan(`${planName} - $${amount}`);
+        setSelectedPlan(planName);
+        setSelectedAmount(amount);
         setShowPaymentModal(true);
+    };
+
+    const handleConfirmPayment = async () => {
+        if (!user) {
+            setError('Please sign in to make a payment.');
+            return;
+        }
+
+        setLoading(true);
+        setError('');
+
+        try {
+            const result = await createPayment({
+                amount: selectedAmount,
+                type: 'subscription',
+                planName: selectedPlan,
+                currency: 'USD',
+            });
+
+            if (result.success) {
+                setPaymentSuccess(true);
+                // Auto close after 3 seconds
+                setTimeout(() => {
+                    setShowPaymentModal(false);
+                }, 3000);
+            } else {
+                setError(result.error || 'Payment failed. Please try again.');
+            }
+        } catch (err: any) {
+            console.error('Payment error:', err);
+            setError(err.message || 'An unexpected error occurred.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -226,7 +274,7 @@ export function Pricing() {
                 </div>
             </div>
 
-            {/* Manual Payment Modal */}
+            {/* Payment Modal */}
             <AnimatePresence>
                 {showPaymentModal && (
                     <motion.div
@@ -248,71 +296,89 @@ export function Pricing() {
                                 <XIcon className="size-5" />
                             </button>
 
-                            <h2 className="text-2xl font-bold mb-2">Complete Your Payment</h2>
-                            <p className="text-muted-foreground mb-6">
-                                Please transfer the amount for <strong>{selectedPlan}</strong> to the account below.
-                            </p>
-
-                            {paymentDetails ? (
-                                <div className="space-y-4 bg-muted/30 p-4 rounded-lg border">
-                                    <div className="flex justify-between">
-                                        <span className="font-medium text-muted-foreground">Bank Name:</span>
-                                        <span className="font-bold">{paymentDetails.bankName || 'Not Configured'}</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span className="font-medium text-muted-foreground">Account No:</span>
-                                        <span className="font-mono font-bold">{paymentDetails.accountNumber || 'Not Configured'}</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span className="font-medium text-muted-foreground">IFSC Code:</span>
-                                        <span className="font-mono font-bold">{paymentDetails.ifscCode || 'Not Configured'}</span>
-                                    </div>
-                                    <div className="flex justify-between items-center">
-                                        <span className="font-medium text-muted-foreground">UPI ID:</span>
-                                        <div className="flex items-center gap-2">
-                                            <span className="font-mono font-bold">{paymentDetails.upiId || 'Not Configured'}</span>
-                                            {paymentDetails.upiId && (
-                                                <Badge variant="outline" className="text-xs">UPI</Badge>
-                                            )}
-                                        </div>
-                                    </div>
+                            {paymentSuccess ? (
+                                <div className="text-center py-8">
+                                    <motion.div
+                                        initial={{ scale: 0 }}
+                                        animate={{ scale: 1 }}
+                                        className="w-16 h-16 mx-auto bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-4"
+                                    >
+                                        <CheckIcon className="w-8 h-8 text-green-600 dark:text-green-400" />
+                                    </motion.div>
+                                    <h2 className="text-2xl font-bold mb-2">Payment Recorded!</h2>
+                                    <p className="text-muted-foreground">
+                                        Your payment has been recorded successfully. You'll receive a confirmation email once it's approved.
+                                    </p>
                                 </div>
                             ) : (
-                                <div className="text-center py-8 text-muted-foreground">
-                                    Loading payment details...
-                                </div>
+                                <>
+                                    <h2 className="text-2xl font-bold mb-2">Complete Your Payment</h2>
+                                    <p className="text-muted-foreground mb-6">
+                                        Please transfer <strong>${selectedAmount}</strong> for <strong>{selectedPlan}</strong> to the account below.
+                                    </p>
+
+                                    {loading && !paymentDetails ? (
+                                        <div className="text-center py-8">
+                                            <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
+                                            <p className="text-muted-foreground mt-2">Loading payment details...</p>
+                                        </div>
+                                    ) : paymentDetails ? (
+                                        <div className="space-y-4 bg-muted/30 p-4 rounded-lg border">
+                                            <div className="flex justify-between">
+                                                <span className="font-medium text-muted-foreground">Bank Name:</span>
+                                                <span className="font-bold">{paymentDetails.bankName || 'Not Configured'}</span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <span className="font-medium text-muted-foreground">Account No:</span>
+                                                <span className="font-mono font-bold">{paymentDetails.accountNumber || 'Not Configured'}</span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <span className="font-medium text-muted-foreground">IFSC Code:</span>
+                                                <span className="font-mono font-bold">{paymentDetails.ifscCode || 'Not Configured'}</span>
+                                            </div>
+                                            <div className="flex justify-between items-center">
+                                                <span className="font-medium text-muted-foreground">UPI ID:</span>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="font-mono font-bold">{paymentDetails.upiId || 'Not Configured'}</span>
+                                                    {paymentDetails.upiId && (
+                                                        <Badge variant="outline" className="text-xs">UPI</Badge>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="text-center py-8 text-muted-foreground">
+                                            <p>Payment details not configured yet.</p>
+                                            <p className="text-sm">Please contact admin.</p>
+                                        </div>
+                                    )}
+
+                                    {error && (
+                                        <div className="mt-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-600 dark:text-red-400 text-sm">
+                                            {error}
+                                        </div>
+                                    )}
+
+                                    <div className="mt-6 text-sm text-muted-foreground text-center">
+                                        <p>After payment, click below to record it. You'll receive an email confirmation once approved.</p>
+                                    </div>
+
+                                    <Button
+                                        className="w-full mt-6"
+                                        onClick={handleConfirmPayment}
+                                        disabled={loading}
+                                    >
+                                        {loading ? (
+                                            <span className="flex items-center gap-2">
+                                                <Loader2 className="w-4 h-4 animate-spin" />
+                                                Processing...
+                                            </span>
+                                        ) : (
+                                            'I Have Made the Payment'
+                                        )}
+                                    </Button>
+                                </>
                             )}
-
-                            <div className="mt-6 text-sm text-muted-foreground text-center">
-                                <p>After payment, please send a screenshot to <strong>admin@jaymusic.com</strong> for activation.</p>
-                            </div>
-
-                            <Button
-                                className="w-full mt-6"
-                                onClick={async () => {
-                                    if (!user) {
-                                        alert("Please sign in to record your payment.");
-                                        return;
-                                    }
-                                    try {
-                                        const amountMatch = selectedPlan.match(/\$(\d+)/);
-                                        const amount = amountMatch ? parseInt(amountMatch[1]) : 0;
-
-                                        await axios.post('http://localhost:5000/payments/manual', {
-                                            userId: user.id,
-                                            amount: amount,
-                                            type: 'course_fee'
-                                        });
-                                        alert("Payment recorded! Please wait for admin approval.");
-                                        setShowPaymentModal(false);
-                                    } catch (err) {
-                                        console.error(err);
-                                        alert("Failed to record payment. Please try again.");
-                                    }
-                                }}
-                            >
-                                I Have Made the Payment
-                            </Button>
                         </motion.div>
                     </motion.div>
                 )}

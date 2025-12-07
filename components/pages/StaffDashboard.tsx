@@ -203,24 +203,44 @@ const PaymentConfig = () => {
         upiId: ''
     });
     const [msg, setMsg] = useState('');
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        axios.get('http://localhost:5000/config/paymentDetails')
-            .then(res => {
-                if (res.data) setDetails(res.data);
-            })
-            .catch(err => console.error(err));
+        const loadConfig = async () => {
+            try {
+                const { getPaymentConfig } = await import('../../services/paymentService');
+                const config = await getPaymentConfig();
+                if (config) setDetails(config);
+            } catch (err) {
+                console.error('Failed to load payment config:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadConfig();
     }, []);
 
     const handleSave = async () => {
         try {
-            await axios.post('http://localhost:5000/config/paymentDetails', details);
+            setMsg('Saving...');
+            const { updatePaymentConfig } = await import('../../services/paymentService');
+            await updatePaymentConfig(details);
             setMsg('Payment details updated successfully!');
             setTimeout(() => setMsg(''), 3000);
         } catch (err) {
+            console.error('Failed to save payment config:', err);
             setMsg('Failed to update details.');
         }
     };
+
+    if (loading) {
+        return (
+            <div className="border rounded-lg p-4 bg-card">
+                <h2 className="text-xl font-semibold mb-4">Payment Configuration</h2>
+                <p className="text-muted-foreground">Loading...</p>
+            </div>
+        );
+    }
 
     return (
         <div className="border rounded-lg p-4 bg-card space-y-4">
@@ -270,8 +290,9 @@ const PaymentConfig = () => {
                 >
                     Save Configuration
                 </button>
-                {msg && <span className="text-sm text-green-600">{msg}</span>}
+                {msg && <span className={`text-sm ${msg.includes('success') ? 'text-green-600' : 'text-muted-foreground'}`}>{msg}</span>}
             </div>
         </div>
     );
 };
+
