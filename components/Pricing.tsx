@@ -25,7 +25,7 @@ const PaymentQRCode = () => {
                                 key={i}
                                 className={cn(
                                     "rounded-sm",
-                                    Math.random() > 0.5 ? "bg-gray-800" : "bg-transparent"
+                                    i % 3 === 0 ? "bg-gray-800" : "bg-transparent"
                                 )}
                             />
                         ))}
