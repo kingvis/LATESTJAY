@@ -1,3 +1,4 @@
+// @ts-nocheck - This is a Deno/Supabase Edge Function, not Node.js
 // Supabase Edge Function for sending payment confirmation emails
 // Deploy with: npx supabase functions deploy send-payment-email
 
@@ -6,45 +7,45 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')
 
 interface PaymentEmailRequest {
-    to: string
-    userName: string
-    amount: number
-    currency: string
-    transactionId: string
-    paymentDate: string
+  to: string
+  userName: string
+  amount: number
+  currency: string
+  transactionId: string
+  paymentDate: string
 }
 
 serve(async (req) => {
-    // Handle CORS
-    if (req.method === 'OPTIONS') {
-        return new Response('ok', {
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'POST',
-                'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-            },
-        })
+  // Handle CORS
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST',
+        'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+      },
+    })
+  }
+
+  try {
+    const { to, userName, amount, currency, transactionId, paymentDate }: PaymentEmailRequest = await req.json()
+
+    if (!to || !userName || !amount) {
+      return new Response(
+        JSON.stringify({ error: 'Missing required fields' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      )
     }
 
-    try {
-        const { to, userName, amount, currency, transactionId, paymentDate }: PaymentEmailRequest = await req.json()
+    const formattedDate = new Date(paymentDate).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
 
-        if (!to || !userName || !amount) {
-            return new Response(
-                JSON.stringify({ error: 'Missing required fields' }),
-                { status: 400, headers: { 'Content-Type': 'application/json' } }
-            )
-        }
-
-        const formattedDate = new Date(paymentDate).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-        })
-
-        const emailHtml = `
+    const emailHtml = `
       <!DOCTYPE html>
       <html>
         <head>
@@ -127,63 +128,63 @@ serve(async (req) => {
       </html>
     `
 
-        // Send email via Resend
-        if (RESEND_API_KEY) {
-            const res = await fetch('https://api.resend.com/emails', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${RESEND_API_KEY}`,
-                },
-                body: JSON.stringify({
-                    from: 'Jay Music Academy <noreply@jaymusicacademy.com>',
-                    to: [to],
-                    subject: `✓ Payment Confirmed - ${currency} ${amount.toFixed(2)}`,
-                    html: emailHtml,
-                }),
-            })
+    // Send email via Resend
+    if (RESEND_API_KEY) {
+      const res = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${RESEND_API_KEY}`,
+        },
+        body: JSON.stringify({
+          from: 'Jay Music Academy <noreply@jaymusicacademy.com>',
+          to: [to],
+          subject: `✓ Payment Confirmed - ${currency} ${amount.toFixed(2)}`,
+          html: emailHtml,
+        }),
+      })
 
-            const data = await res.json()
+      const data = await res.json()
 
-            if (!res.ok) {
-                console.error('Resend API error:', data)
-                return new Response(
-                    JSON.stringify({ error: 'Failed to send email', details: data }),
-                    { status: 500, headers: { 'Content-Type': 'application/json' } }
-                )
-            }
-
-            return new Response(
-                JSON.stringify({ success: true, messageId: data.id }),
-                {
-                    status: 200,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Access-Control-Allow-Origin': '*',
-                    }
-                }
-            )
-        } else {
-            // Log email for development/testing
-            console.log('Email would be sent to:', to)
-            console.log('Email content:', { userName, amount, currency, transactionId, paymentDate })
-
-            return new Response(
-                JSON.stringify({ success: true, message: 'Email logged (no API key configured)' }),
-                {
-                    status: 200,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Access-Control-Allow-Origin': '*',
-                    }
-                }
-            )
-        }
-    } catch (error) {
-        console.error('Email function error:', error)
+      if (!res.ok) {
+        console.error('Resend API error:', data)
         return new Response(
-            JSON.stringify({ error: 'Internal server error' }),
-            { status: 500, headers: { 'Content-Type': 'application/json' } }
+          JSON.stringify({ error: 'Failed to send email', details: data }),
+          { status: 500, headers: { 'Content-Type': 'application/json' } }
         )
+      }
+
+      return new Response(
+        JSON.stringify({ success: true, messageId: data.id }),
+        {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          }
+        }
+      )
+    } else {
+      // Log email for development/testing
+      console.log('Email would be sent to:', to)
+      console.log('Email content:', { userName, amount, currency, transactionId, paymentDate })
+
+      return new Response(
+        JSON.stringify({ success: true, message: 'Email logged (no API key configured)' }),
+        {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          }
+        }
+      )
     }
+  } catch (error) {
+    console.error('Email function error:', error)
+    return new Response(
+      JSON.stringify({ error: 'Internal server error' }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    )
+  }
 })
