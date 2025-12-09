@@ -21,49 +21,48 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { ScrollManager } from './components/ScrollManager';
 import { PageTransition } from './components/PageTransition';
 
-const AppContent = () => {
+// Animated Routes component that handles page transitions
+const AnimatedRoutes = () => {
   const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait" initial={false}>
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<PageTransition><HomePage /></PageTransition>} />
+        <Route path="/about" element={<PageTransition><AboutPage /></PageTransition>} />
+        <Route path="/courses" element={<PageTransition><CoursesPage /></PageTransition>} />
+        <Route path="/branches" element={<PageTransition><BranchesPage /></PageTransition>} />
+        <Route path="/contact" element={<PageTransition><ContactPage /></PageTransition>} />
+        <Route path="/dashboard" element={
+          <PageTransition>
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
+          </PageTransition>
+        } />
+        <Route path="/staff-dashboard" element={
+          <PageTransition>
+            <ProtectedRoute allowedRoles={['admin']}>
+              <StaffDashboard />
+            </ProtectedRoute>
+          </PageTransition>
+        } />
+        <Route path="/signin" element={<PageTransition><SignInPage /></PageTransition>} />
+        <Route path="/signup" element={<PageTransition><SignUpPage /></PageTransition>} />
+        <Route path="/enroll" element={<PageTransition><EnrollPage /></PageTransition>} />
+        <Route path="/pricing" element={<PageTransition><PricingPage /></PageTransition>} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </AnimatePresence>
+  );
+};
+
+const AppContent = () => {
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground font-sans antialiased">
       <Header />
       <main className="flex-grow pt-16">
-        <AnimatePresence mode="wait">
-          <div key={location.pathname}>
-            <Routes>
-              <Route path="/" element={<PageTransition><HomePage /></PageTransition>} />
-              <Route path="/about" element={<PageTransition><AboutPage /></PageTransition>} />
-              <Route path="/courses" element={<PageTransition><CoursesPage /></PageTransition>} />
-              <Route path="/branches" element={<PageTransition><BranchesPage /></PageTransition>} />
-              <Route path="/contact" element={<PageTransition><ContactPage /></PageTransition>} />
-              {/* <Route path="/ai-studio" element={
-                <PageTransition>
-                  <ProtectedRoute>
-                    <AIStudioPage />
-                  </ProtectedRoute>
-                </PageTransition>
-              } /> */}
-              <Route path="/dashboard" element={
-                <PageTransition>
-                  <ProtectedRoute>
-                    <DashboardPage />
-                  </ProtectedRoute>
-                </PageTransition>
-              } />
-              <Route path="/staff-dashboard" element={
-                <PageTransition>
-                  <ProtectedRoute allowedRoles={['admin']}>
-                    <StaffDashboard />
-                  </ProtectedRoute>
-                </PageTransition>
-              } />
-              <Route path="/signin" element={<PageTransition><SignInPage /></PageTransition>} />
-              <Route path="/signup" element={<PageTransition><SignUpPage /></PageTransition>} />
-              <Route path="/enroll" element={<PageTransition><EnrollPage /></PageTransition>} />
-              <Route path="/pricing" element={<PageTransition><PricingPage /></PageTransition>} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </div>
-        </AnimatePresence>
+        <AnimatedRoutes />
       </main>
       <Footer />
       <CourseAssistant />
