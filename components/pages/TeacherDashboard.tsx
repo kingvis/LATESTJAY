@@ -92,11 +92,11 @@ export const TeacherDashboard = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="p-4 bg-accent/30 rounded-lg border border-border">
                         <p className="text-sm text-muted-foreground">Total Earnings</p>
-                        <h3 className="text-2xl font-bold">$3,250.00</h3>
+                        <h3 className="text-2xl font-bold">₹2,70,000</h3>
                     </div>
                     <div className="p-4 bg-accent/30 rounded-lg border border-border">
                         <p className="text-sm text-muted-foreground">Pending Payout</p>
-                        <h3 className="text-2xl font-bold">$1,200.00</h3>
+                        <h3 className="text-2xl font-bold">₹1,00,000</h3>
                     </div>
                     <div className="p-4 bg-accent/30 rounded-lg border border-border">
                         <p className="text-sm text-muted-foreground">Next Payout Date</p>

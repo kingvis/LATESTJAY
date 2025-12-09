@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { PlusIcon, ShieldCheckIcon, CheckIcon, XIcon, Loader2 } from 'lucide-react';
+import { PlusIcon, ShieldCheckIcon, CheckIcon, XIcon, Loader2, QrCodeIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
@@ -8,6 +8,54 @@ import { cn } from '@/lib/utils';
 import { BorderTrail } from './ui/border-trail';
 import { useAuth } from '../contexts/AuthContext';
 import { createPayment, getPaymentConfig } from '../services/paymentService';
+
+// QR Code component that displays "Bank details coming soon" message
+const PaymentQRCode = () => {
+    // This is a simple placeholder QR-like visual
+    // The QR code data would encode: "Bank details coming soon - Jay Music Academy"
+    return (
+        <div className="flex flex-col items-center space-y-3">
+            <div className="relative bg-white p-4 rounded-xl shadow-lg">
+                {/* RuPay branded QR code placeholder */}
+                <div className="w-48 h-48 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center relative overflow-hidden">
+                    {/* QR Code pattern simulation */}
+                    <div className="absolute inset-2 grid grid-cols-8 grid-rows-8 gap-0.5">
+                        {Array.from({ length: 64 }).map((_, i) => (
+                            <div
+                                key={i}
+                                className={cn(
+                                    "rounded-sm",
+                                    Math.random() > 0.5 ? "bg-gray-800" : "bg-transparent"
+                                )}
+                            />
+                        ))}
+                    </div>
+                    {/* Center logo area */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="bg-white p-2 rounded-lg shadow-sm">
+                            <div className="text-xs font-bold text-blue-600">RuPay</div>
+                        </div>
+                    </div>
+                </div>
+                {/* RuPay logo at bottom */}
+                <div className="mt-2 flex justify-center items-center gap-2">
+                    <div className="bg-gradient-to-r from-green-500 via-orange-500 to-blue-500 text-white text-xs font-bold px-3 py-1 rounded">
+                        RuPay
+                    </div>
+                    <span className="text-xs text-gray-500">Scan to Pay</span>
+                </div>
+            </div>
+            <div className="text-center">
+                <p className="text-sm font-medium text-amber-600 dark:text-amber-400">
+                    📱 Scan QR Code with any UPI App
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                    Bank details will be displayed after scanning
+                </p>
+            </div>
+        </div>
+    );
+};
 
 export function Pricing() {
     const { user } = useAuth();
@@ -59,7 +107,7 @@ export function Pricing() {
                 amount: selectedAmount,
                 type: 'subscription',
                 planName: selectedPlan,
-                currency: 'USD',
+                currency: 'INR',
             });
 
             if (result.success) {
@@ -77,6 +125,11 @@ export function Pricing() {
         } finally {
             setLoading(false);
         }
+    };
+
+    // Format price in Indian Rupees
+    const formatINR = (amount: number) => {
+        return new Intl.NumberFormat('en-IN').format(amount);
     };
 
     return (
@@ -131,7 +184,7 @@ export function Pricing() {
                                         <div className="flex items-center justify-between">
                                             <h3 className="leading-none font-semibold">Monthly</h3>
                                             <div className="flex items-center gap-x-1">
-                                                <span className="text-muted-foreground text-sm line-through">$35</span>
+                                                <span className="text-muted-foreground text-sm line-through">₹2,999</span>
                                                 <Badge variant="secondary">Save 15%</Badge>
                                             </div>
                                         </div>
@@ -139,13 +192,13 @@ export function Pricing() {
                                     </div>
                                     <div className="mt-10 space-y-4">
                                         <div className="text-muted-foreground flex items-end gap-0.5 text-xl">
-                                            <span>$</span>
+                                            <span>₹</span>
                                             <span className="text-foreground -mb-0.5 text-4xl font-extrabold tracking-tighter md:text-5xl">
-                                                29
+                                                {formatINR(2499)}
                                             </span>
                                             <span>/month</span>
                                         </div>
-                                        <Button className="w-full" variant="outline" onClick={() => handlePayment(29, 'Student Monthly Plan')}>
+                                        <Button className="w-full" variant="outline" onClick={() => handlePayment(2499, 'Student Monthly Plan')}>
                                             Start Learning
                                         </Button>
                                         <ul className="text-xs text-muted-foreground space-y-2 pt-4">
@@ -166,7 +219,7 @@ export function Pricing() {
                                         <div className="flex items-center justify-between">
                                             <h3 className="leading-none font-semibold">Yearly</h3>
                                             <div className="flex items-center gap-x-1">
-                                                <span className="text-muted-foreground text-sm line-through">$420</span>
+                                                <span className="text-muted-foreground text-sm line-through">₹29,988</span>
                                                 <Badge>Best Value</Badge>
                                             </div>
                                         </div>
@@ -174,13 +227,13 @@ export function Pricing() {
                                     </div>
                                     <div className="mt-10 space-y-4">
                                         <div className="text-muted-foreground flex items-end text-xl">
-                                            <span>$</span>
+                                            <span>₹</span>
                                             <span className="text-foreground -mb-0.5 text-4xl font-extrabold tracking-tighter md:text-5xl">
-                                                290
+                                                {formatINR(19999)}
                                             </span>
                                             <span>/year</span>
                                         </div>
-                                        <Button className="w-full" onClick={() => handlePayment(290, 'Student Yearly Plan')}>
+                                        <Button className="w-full" onClick={() => handlePayment(19999, 'Student Yearly Plan')}>
                                             Get Yearly Plan
                                         </Button>
                                         <ul className="text-xs text-muted-foreground space-y-2 pt-4">
@@ -220,13 +273,13 @@ export function Pricing() {
                                     </div>
                                     <div className="mt-8 space-y-4">
                                         <div className="text-muted-foreground flex items-end gap-0.5 text-xl">
-                                            <span>$</span>
+                                            <span>₹</span>
                                             <span className="text-foreground -mb-0.5 text-4xl font-extrabold tracking-tighter md:text-5xl">
-                                                12
+                                                {formatINR(999)}
                                             </span>
                                             <span>/month</span>
                                         </div>
-                                        <Button className="w-full" variant="outline" onClick={() => handlePayment(12, 'Teacher Monthly Membership')}>
+                                        <Button className="w-full" variant="outline" onClick={() => handlePayment(999, 'Teacher Monthly Membership')}>
                                             Apply Monthly
                                         </Button>
                                         <ul className="text-sm text-muted-foreground space-y-3 pt-4">
@@ -252,13 +305,13 @@ export function Pricing() {
                                     </div>
                                     <div className="mt-8 space-y-4">
                                         <div className="text-muted-foreground flex items-end gap-0.5 text-xl">
-                                            <span>$</span>
+                                            <span>₹</span>
                                             <span className="text-foreground -mb-0.5 text-4xl font-extrabold tracking-tighter md:text-5xl">
-                                                99
+                                                {formatINR(7999)}
                                             </span>
                                             <span>/year</span>
                                         </div>
-                                        <Button className="w-full" variant="default" onClick={() => handlePayment(99, 'Teacher Yearly Membership')}>
+                                        <Button className="w-full" variant="default" onClick={() => handlePayment(7999, 'Teacher Yearly Membership')}>
                                             Apply Yearly
                                         </Button>
                                         <ul className="text-sm text-muted-foreground space-y-3 pt-4">
@@ -287,7 +340,7 @@ export function Pricing() {
                             initial={{ scale: 0.95, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0.95, opacity: 0 }}
-                            className="bg-background border rounded-xl shadow-xl w-full max-w-md p-6 relative"
+                            className="bg-background border rounded-xl shadow-xl w-full max-w-lg p-6 relative max-h-[90vh] overflow-y-auto"
                         >
                             <button
                                 onClick={() => setShowPaymentModal(false)}
@@ -314,8 +367,24 @@ export function Pricing() {
                                 <>
                                     <h2 className="text-2xl font-bold mb-2">Complete Your Payment</h2>
                                     <p className="text-muted-foreground mb-6">
-                                        Please transfer <strong>${selectedAmount}</strong> for <strong>{selectedPlan}</strong> to the account below.
+                                        Please transfer <strong>₹{formatINR(selectedAmount)}</strong> for <strong>{selectedPlan}</strong>
                                     </p>
+
+                                    {/* RuPay QR Code Section */}
+                                    <div className="mb-6">
+                                        <PaymentQRCode />
+                                    </div>
+
+                                    <div className="relative">
+                                        <div className="absolute inset-0 flex items-center">
+                                            <span className="w-full border-t" />
+                                        </div>
+                                        <div className="relative flex justify-center text-xs uppercase">
+                                            <span className="bg-background px-2 text-muted-foreground">
+                                                Or use bank details
+                                            </span>
+                                        </div>
+                                    </div>
 
                                     {loading && !paymentDetails ? (
                                         <div className="text-center py-8">
@@ -323,23 +392,23 @@ export function Pricing() {
                                             <p className="text-muted-foreground mt-2">Loading payment details...</p>
                                         </div>
                                     ) : paymentDetails ? (
-                                        <div className="space-y-4 bg-muted/30 p-4 rounded-lg border">
+                                        <div className="space-y-4 bg-muted/30 p-4 rounded-lg border mt-4">
                                             <div className="flex justify-between">
                                                 <span className="font-medium text-muted-foreground">Bank Name:</span>
-                                                <span className="font-bold">{paymentDetails.bankName || 'Not Configured'}</span>
+                                                <span className="font-bold">{paymentDetails.bankName || 'Coming Soon'}</span>
                                             </div>
                                             <div className="flex justify-between">
                                                 <span className="font-medium text-muted-foreground">Account No:</span>
-                                                <span className="font-mono font-bold">{paymentDetails.accountNumber || 'Not Configured'}</span>
+                                                <span className="font-mono font-bold">{paymentDetails.accountNumber || 'Coming Soon'}</span>
                                             </div>
                                             <div className="flex justify-between">
                                                 <span className="font-medium text-muted-foreground">IFSC Code:</span>
-                                                <span className="font-mono font-bold">{paymentDetails.ifscCode || 'Not Configured'}</span>
+                                                <span className="font-mono font-bold">{paymentDetails.ifscCode || 'Coming Soon'}</span>
                                             </div>
                                             <div className="flex justify-between items-center">
                                                 <span className="font-medium text-muted-foreground">UPI ID:</span>
                                                 <div className="flex items-center gap-2">
-                                                    <span className="font-mono font-bold">{paymentDetails.upiId || 'Not Configured'}</span>
+                                                    <span className="font-mono font-bold">{paymentDetails.upiId || 'Coming Soon'}</span>
                                                     {paymentDetails.upiId && (
                                                         <Badge variant="outline" className="text-xs">UPI</Badge>
                                                     )}
@@ -347,9 +416,9 @@ export function Pricing() {
                                             </div>
                                         </div>
                                     ) : (
-                                        <div className="text-center py-8 text-muted-foreground">
-                                            <p>Payment details not configured yet.</p>
-                                            <p className="text-sm">Please contact admin.</p>
+                                        <div className="text-center py-4 text-muted-foreground mt-4">
+                                            <p className="font-medium text-amber-600 dark:text-amber-400">🏦 Bank details coming soon!</p>
+                                            <p className="text-sm mt-1">Please use the QR code above to make payment.</p>
                                         </div>
                                     )}
 

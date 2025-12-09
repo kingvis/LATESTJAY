@@ -104,7 +104,7 @@ export const StaffDashboard = () => {
                                 <TableRow>
                                     <TableCell>Total Revenue</TableCell>
                                     <TableCell className="text-right font-bold text-green-600">
-                                        ${data.financials.totalRevenue.toLocaleString()}
+                                        ₹{data.financials.totalRevenue.toLocaleString('en-IN')}
                                     </TableCell>
                                 </TableRow>
                                 <TableRow>
