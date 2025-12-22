@@ -20,7 +20,7 @@ export const ContactPage = () => {
 
     return (
         <div className="relative py-16 md:py-24 overflow-hidden min-h-screen">
-             <div className="absolute inset-0 -z-10">
+            <div className="absolute inset-0 -z-10">
                 <ElegantShape
                     delay={0.3}
                     width={600}
@@ -37,7 +37,7 @@ export const ContactPage = () => {
                     gradient="from-rose-500/[0.15]"
                     className="right-[-5%] md:right-[0%] top-[70%] md:top-[75%]"
                 />
-                 <ElegantShape
+                <ElegantShape
                     delay={0.4}
                     width={300}
                     height={80}
@@ -62,8 +62,8 @@ export const ContactPage = () => {
                                 <CheckCircleIcon className="h-16 w-16 text-green-500 mx-auto mb-4" />
                                 <h2 className="text-2xl font-bold text-card-foreground mb-2">Message Sent!</h2>
                                 <p className="text-muted-foreground mb-6">{status}</p>
-                                <NavLink 
-                                    to="/" 
+                                <NavLink
+                                    to="/"
                                     className="inline-block bg-primary text-primary-foreground font-bold py-3 px-8 rounded-full shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-primary/20"
                                 >
                                     Return to Home
@@ -75,11 +75,11 @@ export const ContactPage = () => {
                                 <form onSubmit={handleSubmit} className="space-y-6">
                                     <div>
                                         <label htmlFor="name" className="block text-sm font-medium text-muted-foreground">Full Name</label>
-                                        <input type="text" name="name" id="name" value={formData.name} onChange={handleChange} required className="mt-1 block w-full bg-accent border border-border rounded-md shadow-sm py-2 px-3 text-foreground focus:outline-none focus:ring-ring focus:border-ring"/>
+                                        <input type="text" name="name" id="name" value={formData.name} onChange={handleChange} required className="mt-1 block w-full bg-accent border border-border rounded-md shadow-sm py-2 px-3 text-foreground focus:outline-none focus:ring-ring focus:border-ring" />
                                     </div>
                                     <div>
                                         <label htmlFor="email" className="block text-sm font-medium text-muted-foreground">Email Address</label>
-                                        <input type="email" name="email" id="email" value={formData.email} onChange={handleChange} required className="mt-1 block w-full bg-accent border border-border rounded-md shadow-sm py-2 px-3 text-foreground focus:outline-none focus:ring-ring focus:border-ring"/>
+                                        <input type="email" name="email" id="email" value={formData.email} onChange={handleChange} required className="mt-1 block w-full bg-accent border border-border rounded-md shadow-sm py-2 px-3 text-foreground focus:outline-none focus:ring-ring focus:border-ring" />
                                     </div>
                                     <div>
                                         <label htmlFor="message" className="block text-sm font-medium text-muted-foreground">Message</label>
@@ -98,25 +98,25 @@ export const ContactPage = () => {
                     {/* Contact Info */}
                     <div className="space-y-8">
                         <div className="bg-card/50 backdrop-blur-xl p-8 rounded-lg border border-border">
-                             <h3 className="text-xl font-bold text-card-foreground mb-4">Contact Information</h3>
+                            <h3 className="text-xl font-bold text-card-foreground mb-4">Contact Information</h3>
                             <div className="space-y-4 text-muted-foreground">
                                 <p className="flex items-center">
-                                    <PhoneIcon className="w-5 h-5 mr-3 text-primary"/>
-                                    +91 12345 67890
+                                    <PhoneIcon className="w-5 h-5 mr-3 text-primary" />
+                                    +91 8754482015
                                 </p>
                                 <p className="flex items-center">
-                                    <MailIcon className="w-5 h-5 mr-3 text-primary"/>
-                                    info@jaymusicacademy.com
+                                    <MailIcon className="w-5 h-5 mr-3 text-primary" />
+                                    Hello@jaymusicacademy.in
                                 </p>
                             </div>
                         </div>
                         <div className="bg-card/50 backdrop-blur-xl p-8 rounded-lg border border-border">
-                             <h3 className="text-xl font-bold text-card-foreground mb-4">Operating Hours</h3>
-                             <div className="space-y-2 text-muted-foreground">
-                                <p><span className="font-semibold text-primary">Thiruninravur:</span> Mon - Sat, 10am - 8pm</p>
-                                <p><span className="font-semibold text-primary">Kattupakkam:</span> Mon - Sun, Timings vary</p>
+                            <h3 className="text-xl font-bold text-card-foreground mb-4">Operating Hours</h3>
+                            <div className="space-y-2 text-muted-foreground">
+                                <p><span className="font-semibold text-primary">Thiruninravur:</span> Mon - Fri: 4pm - 8:30pm | Sun: 8am - 5pm</p>
+                                <p><span className="font-semibold text-primary">Kattupakkam:</span> Opening Soon</p>
                                 <p>All branches closed on public holidays.</p>
-                             </div>
+                            </div>
                         </div>
                     </div>
                 </div>

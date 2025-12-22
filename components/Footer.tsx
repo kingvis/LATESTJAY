@@ -51,12 +51,12 @@ export const Footer = () => {
               </div>
             </div>
             <div className="md:grid md:grid-cols-1 md:gap-8">
-               <div>
+              <div>
                 <h3 className="text-sm font-semibold text-foreground tracking-wider uppercase">Contact</h3>
                 <ul className="mt-4 space-y-4">
-                  <li><p className="text-base text-muted-foreground">info@jaymusicacademy.com</p></li>
-                  <li><p className="text-base text-muted-foreground">+91 12345 67890</p></li>
-                  <li><p className="text-base text-muted-foreground">Thiruninravur & Kattupakkam</p></li>
+                  <li><p className="text-base text-muted-foreground">Hello@jaymusicacademy.in</p></li>
+                  <li><p className="text-base text-muted-foreground">+91 8754482015</p></li>
+                  <li><p className="text-base text-muted-foreground">390, Chennai - Tiruvallur High Rd, Thiruninravur, Chennai, Tamil Nadu 602024</p></li>
                   <li className="pt-2">
                     <NavLink to="/contact" className="text-base text-primary hover:underline font-medium">
                       Send us a message &rarr;

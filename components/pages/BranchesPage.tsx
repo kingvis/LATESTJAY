@@ -10,12 +10,12 @@ const BranchCard = ({ name, address, facilities, hours, isMain }: { name: string
             <div className="p-8 flex-grow">
                 <h2 className="text-3xl font-bold text-card-foreground mb-2">{name}</h2>
                 <p className="text-primary font-semibold mb-6">{isMain ? 'Main Branch' : 'Additional Branch'}</p>
-                
+
                 <div className="flex items-start mb-4">
                     <LocationMarkerIcon className="h-6 w-6 text-primary mt-1 mr-3 flex-shrink-0" />
                     <p className="text-muted-foreground">{address}</p>
                 </div>
-                
+
                 <div className="flex items-start mb-6">
                     <ClockIcon className="h-6 w-6 text-primary mt-1 mr-3 flex-shrink-0" />
                     <p className="text-muted-foreground">{hours}</p>
@@ -25,13 +25,13 @@ const BranchCard = ({ name, address, facilities, hours, isMain }: { name: string
                 <ul className="space-y-2">
                     {facilities.map(facility => (
                         <li key={facility} className="flex items-center text-muted-foreground">
-                             <svg className="h-4 w-4 mr-2 text-primary" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
+                            <svg className="h-4 w-4 mr-2 text-primary" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
                             {facility}
                         </li>
                     ))}
                 </ul>
             </div>
-             <div className="bg-cover bg-center h-48 flex-shrink-0" style={{backgroundImage: `url('https://images.unsplash.com/photo-1517230878791-4d28214057c2?q=80&w=2070&auto=format&fit=crop')`}}></div>
+            <div className="bg-cover bg-center h-48 flex-shrink-0" style={{ backgroundImage: `url('https://images.unsplash.com/photo-1517230878791-4d28214057c2?q=80&w=2070&auto=format&fit=crop')` }}></div>
         </div>
     );
 }
@@ -43,17 +43,17 @@ export const BranchesPage = () => {
     const branches = [
         {
             name: "Thiruninravur",
-            address: "123 Music Lane, Thiruninravur, Chennai, Tamil Nadu 602024",
+            address: "390, Chennai - Tiruvallur High Rd, opp. Alice furniture, Thiruninravur, Thiruvenkada Nagar, Chennai, Tamil Nadu 602024, India",
             facilities: ['Spacious classrooms', 'Acoustically treated rooms', 'Professional-grade instruments', 'Recording studio access'],
-            hours: "Mon - Sat: 10:00 AM - 8:00 PM",
+            hours: "Mon - Fri: 4:00 PM - 8:30 PM | Sun: 8:00 AM - 5:00 PM",
             isMain: true,
             coords: [13.1255, 80.0555] as [number, number]
         },
         {
             name: "Kattupakkam",
-            address: "456 Rhythm Road, Kattupakkam, Chennai, Tamil Nadu 600056",
-            facilities: ['Dedicated dance floors', 'Air-conditioned studios', 'Keyboard lab', 'Waiting area for parents'],
-            hours: "Mon - Fri: 3:00 PM - 9:00 PM | Sat & Sun: 10:00 AM - 6:00 PM",
+            address: "Opening Soon",
+            facilities: ['Coming Soon - Stay Tuned!'],
+            hours: "Opening Soon",
             isMain: false,
             coords: [13.0408, 80.1248] as [number, number]
         }
@@ -69,7 +69,7 @@ export const BranchesPage = () => {
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
-        
+
         const customIcon = L.icon({
             iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
             iconSize: [25, 41],
@@ -83,9 +83,9 @@ export const BranchesPage = () => {
             L.marker(branch.coords, { icon: customIcon }).addTo(map)
                 .bindPopup(`<b>${branch.name}</b><br>${branch.address}`);
         });
-        
+
         isMapInitialized.current = true;
-        
+
         const mapElement = mapRef.current as HTMLElement;
         const resizeObserver = new ResizeObserver(() => {
             map.invalidateSize();
@@ -113,7 +113,7 @@ export const BranchesPage = () => {
 
                 <div className="grid md:grid-cols-2 gap-12">
                     {branches.map((branch) => (
-                        <BranchCard 
+                        <BranchCard
                             key={branch.name}
                             name={branch.name}
                             address={branch.address}

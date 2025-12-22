@@ -116,7 +116,7 @@ serve(async (req) => {
               
               <p style="color: #a0aec0; font-size: 14px; text-align: center; margin: 0;">
                 Thank you for choosing Jay Music Academy.<br>
-                If you have any questions, contact us at <a href="mailto:support@jaymusicacademy.com" style="color: #667eea;">support@jaymusicacademy.com</a>
+                If you have any questions, contact us at <a href="mailto:Hello@jaymusicacademy.in" style="color: #667eea;">Hello@jaymusicacademy.in</a> or call +91 8754482015
               </p>
             </div>
             
@@ -137,7 +137,7 @@ serve(async (req) => {
           'Authorization': `Bearer ${RESEND_API_KEY}`,
         },
         body: JSON.stringify({
-          from: 'Jay Music Academy <noreply@jaymusicacademy.com>',
+          from: 'Jay Music Academy <noreply@jaymusicacademy.in>',
           to: [to],
           subject: `✓ Payment Confirmed - ${currency} ${amount.toFixed(2)}`,
           html: emailHtml,

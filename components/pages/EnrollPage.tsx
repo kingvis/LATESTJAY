@@ -38,7 +38,7 @@ export const EnrollPage = () => {
         // In a real app, you would handle form submission to a backend here
         console.log('Form Submitted:', formData);
         setStatus(`Thank you, ${formData.parentName}! Your enrollment request for ${formData.studentName} has been received. We will contact you at ${formData.email} shortly to confirm the details.`);
-        
+
         // Reset form after a delay and redirect
         setTimeout(() => {
             setFormData({
@@ -59,7 +59,7 @@ export const EnrollPage = () => {
     return (
         <div className="relative py-16 md:py-24 overflow-hidden min-h-screen">
             <div className="absolute inset-0 -z-10">
-                 <ElegantShape
+                <ElegantShape
                     delay={0.3}
                     width={600}
                     height={140}
@@ -93,36 +93,36 @@ export const EnrollPage = () => {
                         </div>
                     ) : (
                         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                             <div className="md:col-span-2">
+                            <div className="md:col-span-2">
                                 <h2 className="text-xl font-bold text-card-foreground mb-4 border-b border-border pb-2">Student Information</h2>
                             </div>
                             <div>
                                 <label htmlFor="studentName" className="block text-sm font-medium text-muted-foreground">Student's Full Name</label>
-                                <input type="text" name="studentName" id="studentName" value={formData.studentName} onChange={handleChange} required className="mt-1 block w-full bg-accent border border-border rounded-md shadow-sm py-2 px-3 text-foreground focus:outline-none focus:ring-ring focus:border-ring"/>
+                                <input type="text" name="studentName" id="studentName" value={formData.studentName} onChange={handleChange} required className="mt-1 block w-full bg-accent border border-border rounded-md shadow-sm py-2 px-3 text-foreground focus:outline-none focus:ring-ring focus:border-ring" />
                             </div>
-                             <div>
+                            <div>
                                 <label htmlFor="studentAge" className="block text-sm font-medium text-muted-foreground">Student's Age</label>
-                                <input type="number" name="studentAge" id="studentAge" value={formData.studentAge} onChange={handleChange} required className="mt-1 block w-full bg-accent border border-border rounded-md shadow-sm py-2 px-3 text-foreground focus:outline-none focus:ring-ring focus:border-ring"/>
+                                <input type="number" name="studentAge" id="studentAge" value={formData.studentAge} onChange={handleChange} required className="mt-1 block w-full bg-accent border border-border rounded-md shadow-sm py-2 px-3 text-foreground focus:outline-none focus:ring-ring focus:border-ring" />
                             </div>
                             <div className="md:col-span-2">
                                 <h2 className="text-xl font-bold text-card-foreground mb-4 border-b border-border pb-2 pt-4">Parent/Guardian Information</h2>
                             </div>
                             <div>
                                 <label htmlFor="parentName" className="block text-sm font-medium text-muted-foreground">Parent/Guardian's Full Name</label>
-                                <input type="text" name="parentName" id="parentName" value={formData.parentName} onChange={handleChange} required className="mt-1 block w-full bg-accent border border-border rounded-md shadow-sm py-2 px-3 text-foreground focus:outline-none focus:ring-ring focus:border-ring"/>
+                                <input type="text" name="parentName" id="parentName" value={formData.parentName} onChange={handleChange} required className="mt-1 block w-full bg-accent border border-border rounded-md shadow-sm py-2 px-3 text-foreground focus:outline-none focus:ring-ring focus:border-ring" />
                             </div>
                             <div>
                                 <label htmlFor="phone" className="block text-sm font-medium text-muted-foreground">Phone Number</label>
-                                <input type="tel" name="phone" id="phone" value={formData.phone} onChange={handleChange} required className="mt-1 block w-full bg-accent border border-border rounded-md shadow-sm py-2 px-3 text-foreground focus:outline-none focus:ring-ring focus:border-ring"/>
+                                <input type="tel" name="phone" id="phone" value={formData.phone} onChange={handleChange} required className="mt-1 block w-full bg-accent border border-border rounded-md shadow-sm py-2 px-3 text-foreground focus:outline-none focus:ring-ring focus:border-ring" />
                             </div>
-                             <div className="md:col-span-2">
+                            <div className="md:col-span-2">
                                 <label htmlFor="email" className="block text-sm font-medium text-muted-foreground">Email Address</label>
-                                <input type="email" name="email" id="email" value={formData.email} onChange={handleChange} required className="mt-1 block w-full bg-accent border border-border rounded-md shadow-sm py-2 px-3 text-foreground focus:outline-none focus:ring-ring focus:border-ring"/>
+                                <input type="email" name="email" id="email" value={formData.email} onChange={handleChange} required className="mt-1 block w-full bg-accent border border-border rounded-md shadow-sm py-2 px-3 text-foreground focus:outline-none focus:ring-ring focus:border-ring" />
                             </div>
-                             <div className="md:col-span-2">
+                            <div className="md:col-span-2">
                                 <h2 className="text-xl font-bold text-card-foreground mb-4 border-b border-border pb-2 pt-4">Course Details</h2>
                             </div>
-                             <div>
+                            <div>
                                 <label htmlFor="course" className="block text-sm font-medium text-muted-foreground">Select Course</label>
                                 <select name="course" id="course" value={formData.course} onChange={handleChange} required className="mt-1 block w-full bg-accent border border-border rounded-md shadow-sm py-2 px-3 text-foreground focus:outline-none focus:ring-ring focus:border-ring">
                                     {COURSES.map(course => <option key={course.title} value={course.title}>{course.title}</option>)}
@@ -131,13 +131,13 @@ export const EnrollPage = () => {
                             <div>
                                 <label className="block text-sm font-medium text-muted-foreground">Preferred Branch</label>
                                 <div className="mt-2 space-x-4">
-                                     <label className="inline-flex items-center">
-                                        <input type="radio" name="branch" value="Thiruninravur" checked={formData.branch === 'Thiruninravur'} onChange={handleChange} required className="form-radio bg-accent border-border text-primary focus:ring-ring"/>
+                                    <label className="inline-flex items-center">
+                                        <input type="radio" name="branch" value="Thiruninravur" checked={formData.branch === 'Thiruninravur'} onChange={handleChange} required className="form-radio bg-accent border-border text-primary focus:ring-ring" />
                                         <span className="ml-2 text-muted-foreground">Thiruninravur</span>
                                     </label>
-                                    <label className="inline-flex items-center">
-                                        <input type="radio" name="branch" value="Kattupakkam" checked={formData.branch === 'Kattupakkam'} onChange={handleChange} required className="form-radio bg-accent border-border text-primary focus:ring-ring"/>
-                                        <span className="ml-2 text-muted-foreground">Kattupakkam</span>
+                                    <label className="inline-flex items-center opacity-50 cursor-not-allowed">
+                                        <input type="radio" name="branch" value="Kattupakkam" disabled className="form-radio bg-accent border-border text-primary focus:ring-ring" />
+                                        <span className="ml-2 text-muted-foreground">Kattupakkam (Opening Soon)</span>
                                     </label>
                                 </div>
                             </div>
