@@ -8,7 +8,6 @@ import { AboutPage } from './components/pages/AboutPage';
 import { CoursesPage } from './components/pages/CoursesPage';
 import { BranchesPage } from './components/pages/BranchesPage';
 import { ContactPage } from './components/pages/ContactPage';
-import { AIStudioPage } from './components/pages/AIStudioPage';
 import { DashboardPage } from './components/pages/DashboardPage';
 import { CourseAssistant } from './components/CourseAssistant';
 import { AuthProvider } from './contexts/AuthContext';

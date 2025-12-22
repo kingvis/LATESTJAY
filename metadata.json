@@ -1,6 +1,6 @@
 {
   "name": "Jay Music Academy",
-  "description": "A responsive website for Jay Music Academy, featuring course details, branch information, and an AI-powered course recommendation assistant built with the Gemini API.",
+  "description": "A comprehensive music education platform for Jay Music Academy, featuring course details, branch information, student dashboards, and payment integration.",
   "requestFramePermissions": [
     "microphone",
     "geolocation"

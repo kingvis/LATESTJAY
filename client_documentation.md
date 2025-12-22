@@ -21,18 +21,8 @@ Upon logging in, students access a personalized dashboard that serves as their c
     - Badges Earned
     - Class Rank (e.g., Top 10%)
 
-### 2.3. AI Music & Vocal Studio
-The crown jewel of the platform is the **AI Studio**, a suite of 7 powerful tools designed to enhance creativity and practice:
-
-| Tool | Functionality |
-| :--- | :--- |
-| **Practice Planner** | Generates personalized practice routines based on student goals. |
-| **Vocal Coach** | A "Live Assistant" that likely provides real-time feedback or exercises for vocal training. |
-| **Musicpedia** | A "Web Explorer" tool for researching music theory, history, or artist information. |
-| **Gig Finder** | A map-based "Location Finder" to help students find performance opportunities or venues. |
-| **Music Video Creator** | An AI video generation tool to create visuals for student compositions. |
-| **Album Art Designer** | An image editing and generation tool for creating professional cover art. |
-| **Songwriting Partner** | An "Advanced Analyst" text tool to assist with lyrics, rhyme schemes, and song structure. |
+### 2.3. Course Assistance
+The platform includes an AI-powered course recommendation assistant to help students find the right courses based on their interests and skill level.
 
 ## 3. User Experience (UX) & Design
 - **Responsive Interface**: Fully optimized for desktop, tablet, and mobile devices.

@@ -21,7 +21,6 @@ export const Header = () => {
 
   const authLinks = [
     ...commonLinks,
-    // { to: '/ai-studio', text: 'AI Studio' }, // Backup for next sprint
     ...(user?.role !== 'admin' ? [{ to: '/dashboard', text: 'Dashboard' }] : []),
     ...(user?.role === 'admin' ? [{ to: '/staff-dashboard', text: 'Staff Analysis' }] : []),
   ];
